@@ -2,18 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/light_main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "10mb",
-        "runtime": "python3.11"
-      }
+      "src": "backend/minimal_main.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/light_main.py"
+      "dest": "backend/minimal_main.py"
     },
     {
       "src": "/(.*)",
