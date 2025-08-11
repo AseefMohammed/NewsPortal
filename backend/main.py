@@ -35,6 +35,7 @@ MOCK_NEWS = [
         "title": "AI Breakthrough 2025", 
         "url": "https://example.com/1", 
         "excerpt": "Revolutionary AI developments are changing how we interact with technology...", 
+        "content": "Revolutionary AI developments are changing how we interact with technology in unprecedented ways. From advanced language models to autonomous systems, the field of artificial intelligence is experiencing rapid growth and innovation. Recent breakthroughs in machine learning algorithms have enabled computers to perform complex tasks that were once thought impossible. These advancements are not only transforming industries but also reshaping our daily lives, from smart home devices to personalized recommendations.",
         "image": "https://via.placeholder.com/400x200/667eea/ffffff?text=AI+Breakthrough",
         "published_at": "2025-08-11T12:00:00Z", 
         "source": "TechNews",
@@ -45,6 +46,7 @@ MOCK_NEWS = [
         "title": "Climate Solutions Show Promise", 
         "url": "https://example.com/2", 
         "excerpt": "New renewable energy advances are making significant environmental impact...", 
+        "content": "New renewable energy advances are making significant environmental impact across the globe. Solar and wind technologies have become more efficient and affordable, leading to widespread adoption. Breakthrough battery storage solutions are addressing the intermittency challenges of renewable sources. Scientists are also developing innovative carbon capture technologies that could help reverse climate change. These developments offer hope for a sustainable future and demonstrate humanity's capacity to tackle environmental challenges through innovation and collaboration.",
         "image": "https://via.placeholder.com/400x200/4caf50/ffffff?text=Climate+Solutions",
         "published_at": "2025-08-11T11:00:00Z", 
         "source": "GreenNews",
@@ -55,6 +57,7 @@ MOCK_NEWS = [
         "title": "Space Discovery Milestone", 
         "url": "https://example.com/3", 
         "excerpt": "Mars exploration reveals fascinating discoveries about potential life...", 
+        "content": "Mars exploration reveals fascinating discoveries about potential life and the planet's geological history. Recent rover missions have uncovered evidence of ancient water flows and organic compounds in Martian soil. These findings suggest that Mars may have once harbored conditions suitable for life. The discovery of seasonal methane emissions adds another intriguing piece to the puzzle. Future missions are being planned to bring Martian samples back to Earth for detailed analysis, which could definitively answer questions about life beyond our planet.",
         "image": "https://via.placeholder.com/400x200/ff9800/ffffff?text=Space+Discovery",
         "published_at": "2025-08-11T10:00:00Z", 
         "source": "SpaceDaily",
@@ -65,6 +68,7 @@ MOCK_NEWS = [
         "title": "Healthcare Innovation Breakthrough",
         "url": "https://example.com/4",
         "excerpt": "New medical technologies are revolutionizing patient care worldwide...",
+        "content": "New medical technologies are revolutionizing patient care worldwide through precision medicine and AI-driven diagnostics. Advanced imaging techniques allow doctors to detect diseases earlier than ever before. Personalized treatment plans based on genetic analysis are improving patient outcomes. Telemedicine platforms have made healthcare more accessible, especially in remote areas. These innovations are not only saving lives but also reducing healthcare costs and improving the overall patient experience.",
         "image": "https://via.placeholder.com/400x200/e91e63/ffffff?text=Healthcare+Innovation",
         "published_at": "2025-08-11T09:00:00Z",
         "source": "MedDaily",
@@ -75,6 +79,7 @@ MOCK_NEWS = [
         "title": "Economic Markets Surge",
         "url": "https://example.com/5", 
         "excerpt": "Global markets show strong growth with technology sector leading gains...",
+        "content": "Global markets show strong growth with technology sector leading gains across all major indices. Investor confidence has been boosted by robust earnings reports and positive economic indicators. The technology sector continues to drive innovation and create new opportunities for growth. Emerging markets are also showing resilience and attracting increased investment. Analysts predict continued market strength as companies adapt to changing consumer preferences and embrace digital transformation initiatives.",
         "image": "https://via.placeholder.com/400x200/2196f3/ffffff?text=Market+Growth",
         "published_at": "2025-08-11T08:00:00Z",
         "source": "MarketWatch",
@@ -170,9 +175,11 @@ def get_api_news(db = Depends(get_db) if DATABASE_AVAILABLE else None):
                     "title": item.title,
                     "url": item.url,
                     "excerpt": item.excerpt,
+                    "content": getattr(item, 'content', item.excerpt),  # Fallback to excerpt if no content
                     "image": item.image,
                     "published_at": item.published_at.isoformat() if item.published_at else None,
-                    "source": item.source
+                    "source": item.source,
+                    "category": getattr(item, 'category', None)
                 })
             return news_data
         except Exception as e:
@@ -195,9 +202,11 @@ def get_news(limit: int = None, db = Depends(get_db) if DATABASE_AVAILABLE else 
                     "title": item.title,
                     "url": item.url,
                     "excerpt": item.excerpt,
+                    "content": getattr(item, 'content', item.excerpt),  # Fallback to excerpt if no content
                     "image": item.image,
                     "published_at": item.published_at.isoformat() if item.published_at else None,
-                    "source": item.source
+                    "source": item.source,
+                    "category": getattr(item, 'category', None)
                 })
             return news_data
         except Exception as e:
@@ -283,9 +292,11 @@ def get_news_by_id(news_id: int, db = Depends(get_db) if DATABASE_AVAILABLE else
                     "title": news_item.title,
                     "url": news_item.url,
                     "excerpt": news_item.excerpt,
+                    "content": getattr(news_item, 'content', news_item.excerpt),  # Fallback to excerpt if no content
                     "image": news_item.image,
                     "published_at": news_item.published_at.isoformat() if news_item.published_at else None,
-                    "source": news_item.source
+                    "source": news_item.source,
+                    "category": getattr(news_item, 'category', None)
                 }
             else:
                 # Fallback to mock data
@@ -317,9 +328,11 @@ def get_news_by_id_mobile(news_id: int, db = Depends(get_db) if DATABASE_AVAILAB
                     "title": news_item.title,
                     "url": news_item.url,
                     "excerpt": news_item.excerpt,
+                    "content": getattr(news_item, 'content', news_item.excerpt),  # Fallback to excerpt if no content
                     "image": news_item.image,
                     "published_at": news_item.published_at.isoformat() if news_item.published_at else None,
-                    "source": news_item.source
+                    "source": news_item.source,
+                    "category": getattr(news_item, 'category', None)
                 }
             else:
                 # Fallback to mock data
