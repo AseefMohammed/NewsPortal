@@ -30,9 +30,8 @@ const DEVELOPMENT_URL = Platform.OS === 'web'
   : 'http://10.0.2.2:8002';  // Android Emulator (proxy server)
 
 // Determine which URL to use
-const API_BASE_URL = __DEV__ && Platform.OS !== 'web' 
-  ? DEVELOPMENT_URL 
-  : PRODUCTION_URL;
+// Force production URL for now since we have a working deployment
+const API_BASE_URL = PRODUCTION_URL;
 
 console.log('🔗 Final API_BASE_URL:', API_BASE_URL);
 console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Selected URL:', API_BASE_URL);
