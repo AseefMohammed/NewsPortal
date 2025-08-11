@@ -399,13 +399,24 @@ const DashboardScreen = ({ navigation, route }) => {
           activeOpacity={0.8}
           onPress={() => {
             if (typeof item.url === 'string' && item.url.startsWith('http')) {
-              navigation.navigate('NewsDetail', {
+              const navParams = {
                 title: item.title || 'No Title',
                 ai_summary: item.ai_summary || '',
                 key_points: item.key_points || [],
                 content: item.content || item.excerpt || 'No content available.',
                 url: item.url
+              };
+              
+              // Debug logging
+              console.log('Navigating to NewsDetail with params:', {
+                title: navParams.title,
+                content: navParams.content,
+                hasContent: !!item.content,
+                hasExcerpt: !!item.excerpt,
+                itemKeys: Object.keys(item)
               });
+              
+              navigation.navigate('NewsDetail', navParams);
             }
           }}
         >

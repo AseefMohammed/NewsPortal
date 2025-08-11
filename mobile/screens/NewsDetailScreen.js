@@ -7,6 +7,14 @@ const NewsDetailScreen = ({ route }) => {
   const { title, ai_summary, key_points, content, url } = route.params;
   const { theme } = useTheme();
 
+  // Debug logging
+  console.log('NewsDetailScreen received params:', {
+    title: title || 'NO_TITLE',
+    content: content || 'NO_CONTENT', 
+    url: url || 'NO_URL',
+    paramsKeys: Object.keys(route.params || {})
+  });
+
   return (
     <ScrollView style={[globalStyles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={{ paddingBottom: 32 }}>
@@ -28,7 +36,9 @@ const NewsDetailScreen = ({ route }) => {
         ) : null}
         <View style={globalStyles.section}>
           <Text style={[globalStyles.subtitle, { color: theme.colors.primary }]}>Full Article</Text>
-          <Text style={[globalStyles.text, styles.content, { color: theme.colors.text }]}>{content}</Text>
+          <Text style={[globalStyles.text, styles.content, { color: theme.colors.text }]}>
+            {content || 'Content is missing or undefined'}
+          </Text>
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(url)} style={[globalStyles.button, { backgroundColor: theme.colors.primary }]}> 
           <Text style={[globalStyles.buttonText, { color: theme.colors.textInverse }]}>Read more</Text>
