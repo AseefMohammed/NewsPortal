@@ -535,9 +535,11 @@ const DashboardScreen = ({ navigation, route }) => {
                 <TouchableOpacity style={styles.actionButton} onPress={() => toggleSaveArticle(item)}>
                   <MaterialIcons name={isArticleSaved(item) ? 'bookmark' : 'bookmark-border'} size={20} color={isArticleSaved(item) ? theme.colors.primary : theme.colors.textMuted} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionButton, { marginLeft: 8 }]}>\n                  <Feather name="share-2" size={18} color={theme.colors.textMuted} />
+                <TouchableOpacity style={[styles.actionButton, { marginLeft: 8 }]}>
+                  <Feather name="share-2" size={18} color={theme.colors.textMuted} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionButton, { marginLeft: 8 }]}>\n                  <Feather name="more-horizontal" size={18} color={theme.colors.textMuted} />
+                <TouchableOpacity style={[styles.actionButton, { marginLeft: 8 }]}>
+                  <Feather name="more-horizontal" size={18} color={theme.colors.textMuted} />
                 </TouchableOpacity>
               </View>
             </View>
