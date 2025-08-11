@@ -368,6 +368,11 @@ const DashboardScreen = ({ navigation, route }) => {
     const [imageError, setImageError] = useState(false);
     const cardAnimation = new Animated.Value(0);
     
+    // Validate item to prevent crashes
+    if (!item || typeof item !== 'object') {
+      return null;
+    }
+    
     useEffect(() => {
       Animated.timing(cardAnimation, {
         toValue: 1,
@@ -378,7 +383,7 @@ const DashboardScreen = ({ navigation, route }) => {
     }, []);
 
     // Normalize category to match NEWS_GROUPS and fallback to 'Other'
-    let category = item.category || 'Other';
+    let category = String(item.category || 'Other');
     if (!NEWS_GROUPS.includes(category)) {
       category = 'Other';
     }
@@ -389,6 +394,7 @@ const DashboardScreen = ({ navigation, route }) => {
         style={[
           styles.newsCard,
           {
+            backgroundColor: theme.colors.surface || theme.colors.background,
             opacity: cardAnimation,
             transform: [{
               translateY: cardAnimation.interpolate({
@@ -701,8 +707,8 @@ const DashboardScreen = ({ navigation, route }) => {
             keyExtractor={(item) => item.id?.toString() || item.url}
             contentContainerStyle={{
               ...styles.newsList,
-              paddingBottom: 8,
-              paddingHorizontal: theme.spacing.md,
+              paddingBottom: 20,
+              paddingTop: 8,
             }}
             style={{ flex: 1 }}
             showsVerticalScrollIndicator={false}
@@ -727,12 +733,19 @@ const DashboardScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   newsCard: {
+    backgroundColor: '#FFFFFF', // Add explicit white background for light mode
     borderRadius: 24, // theme.borderRadius.xl
     marginBottom: 24, // theme.spacing.lg
+    marginHorizontal: 16, // Add horizontal margins
     overflow: 'hidden',
-    width: SCREEN_WIDTH,
-    alignSelf: 'center',
-    marginHorizontal: 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   categoryBadge: {
     position: 'absolute',
@@ -800,6 +813,7 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 1.5,
     marginHorizontal: 8, // theme.spacing.sm
+    backgroundColor: '#999', // Add explicit background color
   },
   timeText: {
     fontSize: 12, // theme.typography.fontSize.xs
