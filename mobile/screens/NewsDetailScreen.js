@@ -19,7 +19,7 @@ const NewsDetailScreen = ({ route }) => {
     <ScrollView style={[globalStyles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={{ paddingBottom: 32 }}>
       <View style={[styles.card, { backgroundColor: theme.colors.card, shadowColor: theme.colors.surfaceLight }]}> 
-        <Text style={[globalStyles.title, { color: theme.colors.text }]}>{title}</Text>
+        <Text style={[globalStyles.title, { color: theme.colors.text }]}>🔴 DEBUG: {title}</Text>
         {ai_summary ? (
           <View style={globalStyles.section}>
             <Text style={[globalStyles.subtitle, { color: theme.colors.primary }]}>AI Enhanced Summary</Text>
@@ -37,7 +37,7 @@ const NewsDetailScreen = ({ route }) => {
         <View style={globalStyles.section}>
           <Text style={[globalStyles.subtitle, { color: theme.colors.primary }]}>Full Article</Text>
           <Text style={[globalStyles.text, styles.content, { color: theme.colors.text }]}>
-            {content || 'Content is missing or undefined'}
+            {content ? content : 'ERROR: Content is undefined, null, or empty. Check console logs for debugging info.'}
           </Text>
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(url)} style={[globalStyles.button, { backgroundColor: theme.colors.primary }]}> 

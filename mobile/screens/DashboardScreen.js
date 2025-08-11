@@ -155,6 +155,8 @@ const DashboardScreen = ({ navigation, route }) => {
         const newsData = response.data || response || [];
         
         // Transform data to match expected format
+        console.log('🔍 Raw API response sample:', JSON.stringify(newsData[0], null, 2));
+        
         const transformedArticles = newsData.map(article => ({
           id: article.id,
           title: article.title,
@@ -172,6 +174,8 @@ const DashboardScreen = ({ navigation, route }) => {
           reading_time_minutes: article.reading_time_minutes,
           is_trending: article.is_trending
         }));
+        
+        console.log('🔍 Transformed article sample:', JSON.stringify(transformedArticles[0], null, 2));
         
         setArticles(transformedArticles);
         
