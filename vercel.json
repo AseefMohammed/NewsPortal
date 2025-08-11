@@ -2,18 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/main.py",
+      "src": "backend/minimal_main.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/main.py"
+      "dest": "backend/minimal_main.py"
     },
     {
       "src": "/(.*)",
-      "dest": "index.html"
+      "dest": "backend/minimal_main.py"
     }
   ]
 }
