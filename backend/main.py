@@ -306,6 +306,40 @@ def get_news_by_id(news_id: int, db = Depends(get_db) if DATABASE_AVAILABLE else
                 return item
         return {"error": "News item not found"}
 
+@app.get("/news/{news_id}")  # Mobile app calls this endpoint
+def get_news_by_id_mobile(news_id: int, db = Depends(get_db) if DATABASE_AVAILABLE else None):
+    if DATABASE_AVAILABLE and db:
+        try:
+            news_item = db.query(News).filter(News.id == news_id).first()
+            if news_item:
+                return {
+                    "id": news_item.id,
+                    "title": news_item.title,
+                    "url": news_item.url,
+                    "excerpt": news_item.excerpt,
+                    "image": news_item.image,
+                    "published_at": news_item.published_at.isoformat() if news_item.published_at else None,
+                    "source": news_item.source
+                }
+            else:
+                # Fallback to mock data
+                for item in MOCK_NEWS:
+                    if item["id"] == news_id:
+                        return item
+                return {"error": "News item not found"}
+        except Exception as e:
+            # Fallback to mock data
+            for item in MOCK_NEWS:
+                if item["id"] == news_id:
+                    return item
+            return {"error": "News item not found"}
+    else:
+        # Use mock data
+        for item in MOCK_NEWS:
+            if item["id"] == news_id:
+                return item
+        return {"error": "News item not found"}
+
 # Startup event for background tasks
 @app.on_event("startup")
 async def startup_event():
