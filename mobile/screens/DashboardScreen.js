@@ -378,7 +378,7 @@ const DashboardScreen = ({ navigation, route }) => {
     }, []);
 
     // Normalize category to match NEWS_GROUPS and fallback to 'Other'
-    let category = item.category;
+    let category = item.category || 'Other';
     if (!NEWS_GROUPS.includes(category)) {
       category = 'Other';
     }
@@ -426,7 +426,7 @@ const DashboardScreen = ({ navigation, route }) => {
         >
           {/* Category Badge */}
           <View style={[styles.categoryBadge, { backgroundColor: categoryColor + '20' }]}>
-            <Text style={[styles.categoryText, { color: categoryColor }]}>{category}</Text>
+            <Text style={[styles.categoryText, { color: categoryColor }]}>{String(category)}</Text>
           </View>
 
           {/* Article Image */}
@@ -446,7 +446,7 @@ const DashboardScreen = ({ navigation, route }) => {
           <View style={styles.cardContent}>
 
             <Text style={[styles.articleTitle, { color: theme.colors.text }]} numberOfLines={2}>
-              {item.title || 'No Title'}
+              {String(item.title || 'No Title')}
             </Text>
 
             {/* AI Summary if available */}
