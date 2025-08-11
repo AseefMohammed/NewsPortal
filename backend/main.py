@@ -271,65 +271,50 @@ def analyze_sentiment(data: dict):
         "method": "mock" if not AI_AVAILABLE else "ai",
         "status": "success"
     }
-    try:
-        news = db.query(News).order_by(News.published_at.desc()).all()
-        # Trusted UAE and Middle East news domains and names
-        UAE_DOMAINS = [
-            'gulfnews.com', 'khaleejtimes.com', 'thenationalnews.com', 'wam.ae', 'arabianbusiness.com'
-        ]
-        UAE_NAMES = [
-            'gulf news', 'khaleej times', 'the national', 'emirates news agency', 'arabian business'
-        ]
-        ME_DOMAINS = [
-            'aljazeera.com', 'arabnews.com', 'aawsat.com', 'alarabiya.net', 'middleeasteye.net'
-        ]
-        ME_NAMES = [
-            'al jazeera', 'arab news', 'asharq al-awsat', 'al arabiya', 'middle east eye'
-        ]
-        def get_domain(source):
-            import re
-            if not source:
-                return ''
-            # Try to extract domain from source string
-            match = re.search(r"([\w.-]+\.[a-z]{2,})", source.lower())
-            return match.group(1) if match else source.lower()
-        def is_uae(item):
-            domain = get_domain(item.source or item.url)
-            source_str = (item.source or '').lower()
-            return any(d in domain for d in UAE_DOMAINS) or any(n in source_str for n in UAE_NAMES)
-        def is_me(item):
-            domain = get_domain(item.source or item.url)
-            source_str = (item.source or '').lower()
-            return any(d in domain for d in ME_DOMAINS) or any(n in source_str for n in ME_NAMES)
-        uae_news = []
-        me_news = []
-        other_news = []
-        for item in news:
-            if is_uae(item):
-                uae_news.append(item)
-            elif is_me(item):
-                me_news.append(item)
+
+@app.get("/api/news/{news_id}")
+def get_news_by_id(news_id: int, db = Depends(get_db) if DATABASE_AVAILABLE else None):
+    if DATABASE_AVAILABLE and db:
+        try:
+            news_item = db.query(News).filter(News.id == news_id).first()
+            if news_item:
+                return {
+                    "id": news_item.id,
+                    "title": news_item.title,
+                    "url": news_item.url,
+                    "excerpt": news_item.excerpt,
+                    "image": news_item.image,
+                    "published_at": news_item.published_at.isoformat() if news_item.published_at else None,
+                    "source": news_item.source
+                }
             else:
-                other_news.append(item)
-        # Sort each group by recency (already sorted from DB)
-        prioritized_news = uae_news + me_news + other_news
-        news_list = []
-        for item in prioritized_news:
-            news_list.append({
-                "id": item.id,
-                "title": item.title,
-                "excerpt": item.excerpt,
-                "image": item.image,
-                "published_at": str(item.published_at),
-                "source": item.source,
-                "category": getattr(item, 'category', None),
-            })
-        return news_list
-    except Exception as e:
-        import traceback
-        print(f"Error fetching news: {e}")
-        traceback.print_exc()
-        return []
+                # Fallback to mock data
+                for item in MOCK_NEWS:
+                    if item["id"] == news_id:
+                        return item
+                return {"error": "News item not found"}
+        except Exception as e:
+            # Fallback to mock data
+            for item in MOCK_NEWS:
+                if item["id"] == news_id:
+                    return item
+            return {"error": "News item not found"}
+    else:
+        # Use mock data
+        for item in MOCK_NEWS:
+            if item["id"] == news_id:
+                return item
+        return {"error": "News item not found"}
+
+# Startup event for background tasks
+@app.on_event("startup")
+async def startup_event():
+    if DATABASE_AVAILABLE:
+        import threading
+        thread = threading.Thread(target=background_news_fetcher, daemon=True)
+        thread.start()
+        print("🚀 Background news fetcher started")
+    print("📱 NewsPortal API started successfully")
 
 @app.post("/fetch")
 def fetch_news(db = Depends(get_db) if DATABASE_AVAILABLE else None):
@@ -350,36 +335,7 @@ def seed_sample_news(db = Depends(get_db) if DATABASE_AVAILABLE else None):
         return {"status": "seeded", "message": "Sample news added to database"}
     else:
         return {"status": "mock_mode", "message": "Using mock data - seed not needed"}
-    from datetime import datetime, timedelta
-    sample_news = [
-        {
-            "title": "Emirates NBD Reports Strong Q4 Performance",
-            "url": "https://example.com/emirates-nbd-q4",
-            "excerpt": "Emirates NBD has announced impressive Q4 results with 15% growth in digital transactions.",
-            "image": "https://via.placeholder.com/300x200",
-            "published_at": datetime.utcnow() - timedelta(hours=2),
-            "source": "Gulf News"
-        },
-        {
-            "title": "FAB Launches New Digital Banking Platform",
-            "url": "https://example.com/fab-digital-platform",
-            "excerpt": "First Abu Dhabi Bank introduces innovative digital banking solutions for SMEs.",
-            "image": "https://via.placeholder.com/300x200",
-            "published_at": datetime.utcnow() - timedelta(hours=4),
-            "source": "The National"
-        },
-        {
-            "title": "Dubai Islamic Bank Expands Crypto Services",
-            "url": "https://example.com/dib-crypto",
-            "excerpt": "DIB announces expansion of cryptocurrency trading services for retail customers.",
-            "image": "https://via.placeholder.com/300x200",
-            "published_at": datetime.utcnow() - timedelta(hours=6),
-            "source": "Khaleej Times"
-        }
-    ]
-    for news_data in sample_news:
-        if not db.query(News).filter_by(url=news_data["url"]).first():
-            news = News(**news_data)
-            db.add(news)
-    db.commit()
-    return {"status": "seeded", "count": len(sample_news)} 
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000) 
