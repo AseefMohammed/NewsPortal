@@ -74,13 +74,19 @@ def root():
 def api_test(): 
     return {"message": "NewsPortal API Online!", "status": "success", "deployment": "ultra-fast", "news_count": len(NEWS)}
 
-@app.get("/test")  
+@app.get("/test")  # Mobile app also calls this endpoint
 def simple_test(): 
-    return {"message": "Working!", "deployment": "instant"}
+    return {"message": "NewsPortal API Working!", "deployment": "instant", "status": "success"}
 
 # News endpoints
 @app.get("/api/news")
 def get_news(): 
+    return NEWS
+
+@app.get("/news")  # Mobile app calls this endpoint
+def get_news_mobile(limit: int = None):
+    if limit:
+        return NEWS[:limit]
     return NEWS
 
 @app.get("/api/news/{news_id}")
@@ -134,9 +140,6 @@ def debug():
             "/api/ai/sentiment"
         ]
     }
-
-@app.get("/debug")
-def debug(): return {"status": "Live", "news_count": len(NEWS), "deployment": "ultra-fast"}
 
 if __name__ == "__main__":
     import uvicorn
