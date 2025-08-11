@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsPortal - AI-Powered News Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .api-status {
+            margin: 2rem 0;
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .qr-section {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 1rem auto;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #333;
+            border: 4px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .download-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .download-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .api-endpoint {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .download-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📰</div>
+        <h1>NewsPortal</h1>
+        <p class="subtitle">AI-Powered News Platform</p>
+        
+        <div class="api-status">
+            <h3>🚀 API Backend is Live!</h3>
+            <div class="api-endpoint">
+                <strong>Base URL:</strong> <span id="api-url"></span>/api
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Summaries</h3>
+                <p>Get smart summaries powered by advanced AI</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Sentiment Analysis</h3>
+                <p>Understand the emotional tone of news articles</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔍</div>
+                <h3>Smart Search</h3>
+                <p>Find relevant articles with intelligent search</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Ready</h3>
+                <p>Beautiful React Native mobile experience</p>
+            </div>
+        </div>
+        
+        <div class="qr-section">
+            <h3>📱 Test on Mobile</h3>
+            <p>Scan with Expo Go app to test the mobile version:</p>
+            <div class="qr-code">
+                <div>
+                    <p>📱 QR Code</p>
+                    <p style="font-size: 0.8rem;">Use Expo Go app to scan</p>
+                    <p style="font-size: 0.8rem; margin-top: 1rem;">
+                        <strong>Expo Snack URL:</strong><br>
+                        <a href="https://snack.expo.dev" target="_blank" style="color: #667eea;">
+                            snack.expo.dev
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="download-links">
+            <a href="/api/news" class="download-btn">📊 View API</a>
+            <a href="/api/ai/trending" class="download-btn">🔥 Trending News</a>
+            <a href="https://github.com/AseefMohammed/NewsPortal" class="download-btn" target="_blank">💻 View Code</a>
+        </div>
+        
+        <div style="margin-top: 2rem; opacity: 0.8; font-size: 0.9rem;">
+            <p>🌟 Your NewsPortal is successfully deployed!</p>
+            <p>Backend API is running and ready to serve your mobile app.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Set the current URL for API display
+        document.getElementById('api-url').textContent = window.location.origin;
+        
+        // Test API connection
+        fetch('/api/test')
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Test Success:', data);
+            })
+            .catch(error => {
+                console.log('API Test Error:', error);
+            });
+    </script>
+</body>
+</html>

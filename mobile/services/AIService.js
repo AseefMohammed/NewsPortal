@@ -21,11 +21,15 @@ console.log('🌐 Platform detection:', {
   navigatorProduct: typeof window !== 'undefined' && window.navigator ? window.navigator.product : 'undefined'
 });
 
+// Production URL - Update this with your Vercel deployment URL
+const PRODUCTION_URL = 'https://your-newsportal-app.vercel.app/api';
+
 // For React Native on device/simulator, we need to use the actual IP address of the host machine
 // For web, we use localhost with proxy to bypass CORS
+// For production, use the deployed Vercel URL
 const API_BASE_URL = isDev 
-    ? (isWeb ? 'http://localhost:8002' : 'http://192.168.1.244:8002')  // Use host IP for React Native, localhost for web
-    : 'https://your-production-api.com';
+    ? (isWeb ? 'http://localhost:8002' : 'http://192.168.1.244:8002')  // Development
+    : PRODUCTION_URL;  // Production
 
 console.log('🔗 Final API_BASE_URL:', API_BASE_URL);
 console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Selected URL:', API_BASE_URL);

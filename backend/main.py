@@ -71,6 +71,20 @@ class NewsOut(BaseModel):
     class Config:
         orm_mode = True
 
+@app.get("/api/test")
+def api_test_endpoint():
+    return {
+        "message": "NewsPortal API is working!",
+        "status": "online",
+        "ai_enabled": AI_AVAILABLE,
+        "endpoints": {
+            "news": "/api/news",
+            "ai_summary": "/api/ai/summary" if AI_AVAILABLE else "Not available",
+            "ai_sentiment": "/api/ai/sentiment" if AI_AVAILABLE else "Not available",
+            "ai_trending": "/api/ai/trending" if AI_AVAILABLE else "Not available"
+        }
+    }
+
 @app.get("/test")
 def test_endpoint():
     return {"message": "Backend is working!"}

@@ -3,13 +3,9 @@
   "builds": [
     {
       "src": "backend/main.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "mobile/package.json",
-      "use": "@vercel/static-build",
+      "use": "@vercel/python",
       "config": {
-        "distDir": "mobile/web-build"
+        "maxLambdaSize": "15mb"
       }
     }
   ],
@@ -20,10 +16,15 @@
     },
     {
       "src": "/(.*)",
-      "dest": "mobile/web-build/$1"
+      "dest": "index.html"
     }
   ],
   "env": {
     "PYTHON_VERSION": "3.11"
+  },
+  "functions": {
+    "backend/main.py": {
+      "maxDuration": 30
+    }
   }
 }
