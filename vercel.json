@@ -5,7 +5,8 @@
       "src": "backend/main.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "15mb"
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.11"
       }
     }
   ],
@@ -18,13 +19,5 @@
       "src": "/(.*)",
       "dest": "index.html"
     }
-  ],
-  "env": {
-    "PYTHON_VERSION": "3.11"
-  },
-  "functions": {
-    "backend/main.py": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
