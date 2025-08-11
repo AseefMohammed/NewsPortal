@@ -5,9 +5,9 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 // Backend API configuration
-// Using localhost for development to ensure connectivity
 const isReactNative = typeof window === 'undefined' || window.navigator?.product === 'ReactNative';
 const isWeb = !isReactNative;
 const isDev = __DEV__ || process.env.NODE_ENV === 'development';
@@ -21,15 +21,18 @@ console.log('🌐 Platform detection:', {
   navigatorProduct: typeof window !== 'undefined' && window.navigator ? window.navigator.product : 'undefined'
 });
 
-// Production URL - Update this with your Vercel deployment URL
-const PRODUCTION_URL = 'https://your-newsportal-app.vercel.app/api';
+// Production URL - Your Vercel deployment
+const PRODUCTION_URL = 'https://news-portal-nu-eight.vercel.app';
 
-// For React Native on device/simulator, we need to use the actual IP address of the host machine
-// For web, we use localhost with proxy to bypass CORS
-// For production, use the deployed Vercel URL
-const API_BASE_URL = isDev 
-    ? (isWeb ? 'http://localhost:8002' : 'http://192.168.1.244:8002')  // Development
-    : PRODUCTION_URL;  // Production
+// Development URL for local testing
+const DEVELOPMENT_URL = Platform.OS === 'web' 
+  ? 'http://localhost:8002'  // Web development (proxy server)
+  : 'http://10.0.2.2:8002';  // Android Emulator (proxy server)
+
+// Determine which URL to use
+const API_BASE_URL = __DEV__ && Platform.OS !== 'web' 
+  ? DEVELOPMENT_URL 
+  : PRODUCTION_URL;
 
 console.log('🔗 Final API_BASE_URL:', API_BASE_URL);
 console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Selected URL:', API_BASE_URL);
