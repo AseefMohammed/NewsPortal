@@ -1,18 +1,19 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from backend.database import SessionLocal, engine, Base
-from backend.models import News
-from backend.news_fetcher import fetch_and_store_news
+from database import SessionLocal, engine, Base
+from models import News
+from news_fetcher import fetch_and_store_news
 from typing import List
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 import threading
 import time
+import os
 
 # Import AI routes
 try:
-    from backend.ai_routes import router as ai_router
+    from ai_routes import router as ai_router
     AI_AVAILABLE = True
 except ImportError:
     AI_AVAILABLE = False

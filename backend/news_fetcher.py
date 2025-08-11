@@ -10,7 +10,7 @@ import requests
 import feedparser
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import Session
-from backend.models import News
+from models import News
 from datetime import datetime
 import email.utils
 from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
@@ -164,7 +164,7 @@ def fetch_and_store_news(db: Session):
     db.commit()
 
 if __name__ == "__main__":
-    from backend.database import SessionLocal
+    from database import SessionLocal
     db = SessionLocal()
     try:
         fetch_and_store_news(db)

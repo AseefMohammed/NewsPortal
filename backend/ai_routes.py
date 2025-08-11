@@ -1,9 +1,9 @@
 
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
-from backend.database import get_db
-from backend.models import News
-from backend.ai_summarizer import AINewsSummarizer
+from database import get_db
+from models import News
+from ai_summarizer import AINewsSummarizer
 from typing import List, Optional
 from pydantic import BaseModel
 
@@ -43,7 +43,35 @@ async def get_enhanced_news(
         query = query.filter(News.sentiment == sentiment)
     
     news_items = query.order_by(News.published_at.desc()).limit(limit).all()
-    return news_items
+    def ensure_list(val):
+        if val is None:
+            return []
+        if isinstance(val, list):
+            return val
+        if isinstance(val, str):
+            import json
+            try:
+                parsed = json.loads(val)
+                if isinstance(parsed, list):
+                    return parsed
+            except Exception:
+                # fallback: comma-separated string
+                return [v.strip() for v in val.split(',') if v.strip()]
+        return []
+
+    result = []
+    for item in news_items:
+        d = item.__dict__.copy()
+        d['topics'] = ensure_list(getattr(item, 'topics', None))
+        d['key_points'] = ensure_list(getattr(item, 'key_points', None))
+        # Convert published_at to ISO string if it's a datetime
+        published_at = getattr(item, 'published_at', None)
+        if published_at is not None and hasattr(published_at, 'isoformat'):
+            d['published_at'] = published_at.isoformat()
+        else:
+            d['published_at'] = str(published_at) if published_at is not None else None
+        result.append(d)
+    return result
 
 @router.post("/news/{news_id}/enhance")
 async def enhance_news_item(

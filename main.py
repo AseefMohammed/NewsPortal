@@ -202,4 +202,8 @@ def seed_sample_news(db: Session = Depends(get_db)):
             news = News(**news_data)
             db.add(news)
     db.commit()
-    return {"status": "seeded", "count": len(sample_news)} 
+    return {"status": "seeded", "count": len(sample_news)}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001) 
