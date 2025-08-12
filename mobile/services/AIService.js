@@ -22,7 +22,7 @@ console.log('🌐 Platform detection:', {
 });
 
 // Production URL - Your Vercel deployment
-const PRODUCTION_URL = 'https://news-portal-nu-eight.vercel.app';
+const PRODUCTION_URL = 'https://news-portal-asn3.vercel.app';
 
 // Development URL for local testing
 const DEVELOPMENT_URL = Platform.OS === 'web' 
@@ -40,216 +40,125 @@ console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Selected UR
 const API_BASE = API_BASE_URL;
 
 class AIService {
-  constructor() {
-    this.baseURL = API_BASE_URL;
-    this.apiBase = API_BASE;
-    this.cache = new Map();
-    this.authToken = null;
-  }
-
   /**
-   * Initialize service with user authentication
+   * Stub for recordInteraction to prevent frontend errors
    */
-  async initialize(authToken = null) {
-    this.authToken = authToken;
-    if (authToken) {
-      await AsyncStorage.setItem('auth_token', authToken);
-    } else {
-      this.authToken = await AsyncStorage.getItem('auth_token');
-    }
+  async recordInteraction() {
+    // No-op for now. Implement if needed.
+    return;
   }
-
   /**
-   * Get request headers with authentication
+   * Initialize the service (e.g., set auth token)
    */
-  getHeaders() {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-    
-    if (this.authToken) {
-      headers.Authorization = `Bearer ${this.authToken}`;
-    }
-    
-    return headers;
+  initialize(token) {
+    this.authToken = token;
   }
-
   /**
-   * Generic API request wrapper with error handling
+   * Core API request method for all endpoints
+   * @param {string} endpoint - API endpoint (relative to API_BASE_URL)
+   * @param {object} options - fetch options (method, headers, body, etc.)
    */
   async apiRequest(endpoint, options = {}) {
-    const url = endpoint.startsWith('http') ? endpoint : `${this.apiBase}${endpoint}`;
-    
+    const url = `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+    const fetchOptions = {
+      method: options.method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(this.authToken ? { 'Authorization': `Bearer ${this.authToken}` } : {}),
+        ...(options.headers || {})
+      },
+      ...options
+    };
     try {
-      const response = await fetch(url, {
-        headers: this.getHeaders(),
-        ...options,
-      });
-
+      const response = await fetch(url, fetchOptions);
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API Error: ${response.status} - ${errorText}`);
+        throw new Error(`API error ${response.status}: ${errorText}`);
       }
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
-      console.error('API Request failed:', error);
+      console.error('API request failed:', error, url);
       throw error;
     }
   }
-
-  /**
-   * Get latest news with AI enhancements
-   */
+  // Get latest news with AI enhancements from enhanced API
   async getLatestNews(options = {}) {
-    const { limit = 10, category = null, userInteraction = null } = options;
-
+    const { limit = 10, category = null } = options;
     try {
       const cacheKey = `latest_news_${limit}_${category || 'all'}`;
       const cached = await this.getCache(cacheKey);
-
       if (cached && !this.shouldRefresh(cached.timestamp)) {
         return cached.data;
       }
-
-      // Use simple /news endpoint
       const params = new URLSearchParams();
       if (limit) params.append('limit', limit.toString());
       if (category) params.append('category', category);
-
-      const response = await this.apiRequest(`/news?${params}`);
-      const data = response || [];
-      
-      // Cache the response
+      const response = await this.apiRequest(`/api/v2/news/latest?${params}`);
+      console.log('getLatestNews response:', response);
+      const data = response?.data || [];
       await this.setCache(cacheKey, data);
-      
       return data;
     } catch (error) {
       console.error('Error fetching latest news:', error);
-      
-      // Return fallback sample data when backend is unavailable
-      return [
-        {
-          id: 'sample1',
-          title: 'Backend Connection Issue',
-          excerpt: 'Cannot connect to news backend service. Please check if the server is running.',
-          source: 'System',
-          published_at: new Date().toISOString(),
-          category: 'system'
-        },
-        {
-          id: 'sample2',
-          title: 'Running in Offline Mode',
-          excerpt: 'The app is currently running without backend connectivity. Some features may be limited.',
-          source: 'System',
-          published_at: new Date().toISOString(),
-          category: 'system'
-        }
-      ];
+      return [];
     }
   }
 
-  /**
-   * Get trending news with AI analysis
-   */
+  // Get trending news from enhanced API
   async getTrendingNews(options = {}) {
-    const { limit = 10, time_window = '24h' } = options;
-
+    const { limit = 10 } = options;
     try {
       const params = new URLSearchParams();
       if (limit) params.append('limit', limit.toString());
-
-      // Use simple news endpoint and return the latest
-      const response = await this.apiRequest(`/news?${params.toString()}`);
-      return response || [];
+      const response = await this.apiRequest(`/api/v2/news/trending?${params}`);
+      console.log('getTrendingNews response:', response);
+      return response?.data || [];
     } catch (error) {
       console.error('Failed to get trending news:', error);
       return [];
     }
   }
 
-  /**
-   * Search news with AI-powered filtering
-   */
+  // Search news with AI-powered filtering from enhanced API
   async searchNews(query, options = {}) {
     const {
       limit = 20,
       category = null,
       sentiment = null,
     } = options;
-
     try {
       const params = new URLSearchParams();
       if (limit) params.append('limit', limit.toString());
       if (category) params.append('category', category);
-
-      // Use simple news endpoint
-      const response = await this.apiRequest(`/news?${params}`);
-      const allNews = response || [];
-      
-      // Client-side filtering for search
-      if (query && query.trim()) {
-        const searchTerm = query.toLowerCase().trim();
-        return allNews.filter(article => 
-          article.title?.toLowerCase().includes(searchTerm) ||
-          article.excerpt?.toLowerCase().includes(searchTerm)
-        );
-      }
-      
-      return allNews;
+      if (sentiment) params.append('sentiment', sentiment);
+      if (query) params.append('q', query);
+      const response = await this.apiRequest(`/api/v2/news/search?${params}`);
+      console.log('searchNews response:', response);
+      return response?.data || [];
     } catch (error) {
       console.error('Failed to search news:', error);
       return [];
     }
   }
 
-  /**
-   * Get personalized news recommendations
-   */
-  async getPersonalizedNews(userId, options = {}) {
-    const { limit = 20 } = options;
-
-    try {
-      // For simple backend, return regular news (no personalization yet)
-      return await this.getLatestNews({ limit });
-    } catch (error) {
-      console.error('Failed to get personalized news:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Get news categories with analytics
-   */
+  // Get news categories with analytics from enhanced API
   async getNewsCategories() {
     try {
       const cacheKey = 'news_categories';
-      
       if (this.cache.has(cacheKey)) {
         const cached = this.cache.get(cacheKey);
-        if (Date.now() - cached.timestamp < 600000) { // 10 minutes cache
+        if (Date.now() - cached.timestamp < 600000) {
           return cached.data;
         }
       }
-
-      // For simple backend, return static categories that match our NEWS_GROUPS
-      const data = [
-        { name: 'general', count: 0, color: '#007AFF' },
-        { name: 'business', count: 0, color: '#34C759' },
-        { name: 'technology', count: 0, color: '#5856D6' },
-        { name: 'politics', count: 0, color: '#FF9500' },
-        { name: 'entertainment', count: 0, color: '#9C88FF' },
-        { name: 'sports', count: 0, color: '#FF6B6B' },
-        { name: 'health', count: 0, color: '#4ECDC4' }
-      ];
-      
+      const response = await this.apiRequest('/api/v2/news/categories');
+      console.log('getNewsCategories response:', response);
+      const data = response?.data || [];
       this.cache.set(cacheKey, {
         data,
         timestamp: Date.now()
       });
-
       return data;
     } catch (error) {
       console.error('Failed to get categories:', error);
@@ -257,57 +166,28 @@ class AIService {
     }
   }
 
-  /**
-   * Get comprehensive news analytics
-   */
+  // Get comprehensive news analytics from enhanced API
   async getNewsAnalytics(options = {}) {
     const { time_range = '7d' } = options;
-
     try {
-      // For simple backend, return mock analytics data
-      return {
-        total_articles: 25,
-        categories: {
-          'AI': 8,
-          'Other': 17
-        },
-        sentiment_distribution: {
-          'positive': 12,
-          'neutral': 10, 
-          'negative': 3
-        },
-        time_range: time_range
-      };
+      const params = new URLSearchParams();
+      if (time_range) params.append('time_range', time_range);
+      const response = await this.apiRequest(`/api/v2/news/analytics?${params}`);
+      console.log('getNewsAnalytics response:', response);
+      return response?.data || null;
     } catch (error) {
       console.error('Failed to get analytics:', error);
       return null;
     }
   }
-
-  /**
-   * Record user interaction with article
-   */
-  async recordInteraction(userId, articleId, interactionType, data = {}) {
-    try {
-      // For simple backend, just log the interaction locally
-      const interaction = {
-        user_id: userId,
-        article_id: articleId,
-        interaction_type: interactionType,
-        interaction_data: data,
-        timestamp: new Date().toISOString()
-      };
-      
-      // Store interaction locally for now (could be sent to backend later)
-      const key = `interaction_${Date.now()}`;
-      await AsyncStorage.setItem(key, JSON.stringify(interaction));
-      
-      return { success: true, stored_locally: true };
-    } catch (error) {
-      console.error('Failed to record interaction:', error);
-      // Don't throw error for analytics - it shouldn't break the app
-    }
+  constructor() {
+    this.baseURL = API_BASE_URL;
+    this.apiBase = API_BASE;
+    this.cache = new Map();
+    this.authToken = null;
   }
+
+// ...existing code...
 
   /**
    * Refresh news content manually
@@ -328,53 +208,7 @@ class AIService {
   /**
    * Get system health status
    */
-  async getHealthStatus() {
-    try {
-      // Test with simple news endpoint
-      const response = await fetch(`${API_BASE_URL}/news?limit=1`);
-      return { 
-        status: response.ok ? 'healthy' : 'error', 
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      console.error('Failed to get health status:', error);
-      return { status: 'error', error: error.message };
-    }
-  }
-
-  /**
-   * Simple test connection method for debugging
-   */
-  async testConnection() {
-    console.log('=== Testing Connection ===');
-    console.log('API_BASE_URL:', API_BASE_URL);
-    console.log('isDev:', isDev);
-    console.log('isWeb:', isWeb);
-    console.log('__DEV__:', __DEV__);
-    console.log('NODE_ENV:', process.env.NODE_ENV);
-    
-    try {
-      const testUrl = `${API_BASE_URL}/test`;
-      console.log('Attempting fetch to:', testUrl);
-      
-      const response = await fetch(testUrl);
-      console.log('Response received:', response);
-      console.log('Response status:', response.status);
-      console.log('Response headers:', [...response.headers.entries()]);
-      
-      if (response.ok) {
-        const data = await response.text();
-        console.log('Response data:', data);
-        return { success: true, data };
-      } else {
-        console.log('Response not ok:', response.status, response.statusText);
-        return { success: false, error: `${response.status}: ${response.statusText}` };
-      }
-    } catch (error) {
-      console.error('Fetch error:', error);
-      return { success: false, error: error.message };
-    }
-  }
+// ...existing code...
 
   /**
    * Get API server info

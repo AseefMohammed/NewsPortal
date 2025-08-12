@@ -105,10 +105,8 @@ const DashboardScreen = ({ navigation, route }) => {
   const loadCategories = async () => {
     try {
       if (isConnected) {
-        const response = await AIService.getNewsCategories();
-        const categoryData = response.data || [];
+        const categoryData = await AIService.getNewsCategories();
         setCategories(categoryData);
-        
         // Set default selected categories to top 2
         const topCategories = categoryData
           .sort((a, b) => b.count - a.count)
@@ -150,13 +148,9 @@ const DashboardScreen = ({ navigation, route }) => {
           category: selectedCategories.length > 0 ? selectedCategories.join(',') : null,
           ...options
         };
-        
-        const response = await AIService.getLatestNews(newsOptions);
-        const newsData = response.data || response || [];
-        
+        const newsData = await AIService.getLatestNews(newsOptions);
         // Transform data to match expected format
         console.log('🔍 Raw API response sample:', JSON.stringify(newsData[0], null, 2));
-        
         const transformedArticles = newsData.map(article => ({
           id: article.id,
           title: article.title,
@@ -245,12 +239,10 @@ const DashboardScreen = ({ navigation, route }) => {
       setLoading(true);
       
       if (isConnected) {
-        const response = await AIService.searchNews(query, {
+        const searchResults = await AIService.searchNews(query, {
           limit: 20,
           category: selectedCategories.length > 0 ? selectedCategories.join(',') : null
         });
-        
-        const searchResults = response.data || [];
         const transformedResults = searchResults.map(article => ({
           id: article.id,
           title: article.title,
@@ -389,12 +381,15 @@ const DashboardScreen = ({ navigation, route }) => {
     }
     const categoryColor = getCategoryColor(category);
 
+    // Make NewsCard and cardContent backgrounds fully transparent to avoid blocking dashboard features
+    const cardBg = 'transparent';
+    const contentBg = 'transparent';
     return (
       <Animated.View 
         style={[
           styles.newsCard,
           {
-            backgroundColor: theme.colors.surface || theme.colors.background,
+            backgroundColor: cardBg,
             opacity: cardAnimation,
             transform: [{
               translateY: cardAnimation.interpolate({
@@ -445,19 +440,19 @@ const DashboardScreen = ({ navigation, route }) => {
               progressiveRenderingEnabled={true}
               blurRadius={imageError ? 2 : 0}
             />
-            <View style={styles.imageOverlay} />
+          <View style={[styles.imageOverlay, { backgroundColor: 'rgba(0,0,0,0.04)' }]} />
           </View>
 
           {/* Article Content */}
-          <View style={styles.cardContent}>
+          <View style={[styles.cardContent, { backgroundColor: contentBg }]}> 
 
-            <Text style={[styles.articleTitle, { color: theme.colors.text }]} numberOfLines={2}>
+            <Text style={[styles.articleTitle, { color: theme.colors.text, lineHeight: 24 }]} numberOfLines={2}>
               {String(item.title || 'No Title')}
             </Text>
 
             {/* AI Summary if available */}
             {item.ai_summary && typeof item.ai_summary === 'string' && (
-              <View style={[styles.aiSummaryContainer, { backgroundColor: theme.colors.primary + '15' }]}>
+              <View style={[styles.aiSummaryContainer, { backgroundColor: theme.colors.primary + '08', borderColor: theme.colors.primary + '20', borderWidth: 1 }]}>
                 <View style={styles.aiLabel}>
                   <Ionicons name="sparkles" size={14} color={theme.colors.primary} />
                   <Text style={[styles.aiLabelText, { color: theme.colors.primary }]}>AI Summary</Text>
@@ -733,7 +728,6 @@ const DashboardScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   newsCard: {
-    backgroundColor: '#FFFFFF', // Add explicit white background for light mode
     borderRadius: 24, // theme.borderRadius.xl
     marginBottom: 24, // theme.spacing.lg
     marginHorizontal: 16, // Add horizontal margins
@@ -777,26 +771,33 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 60,
+    height: 40,
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   cardContent: {
-    padding: 24, // theme.spacing.lg
+    padding: 20, // theme.spacing.lg
+    backgroundColor: 'transparent',
   },
   articleTitle: {
     fontFamily: 'Roboto-Bold',
     fontSize: 18,
-    marginBottom: 4,
+    marginBottom: 8,
+    lineHeight: 24,
   },
   articleExcerpt: {
     fontFamily: 'Roboto-Regular',
     fontSize: 14,
-    marginBottom: 4,
+    marginBottom: 8,
+    lineHeight: 20,
   },
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 12,
+    paddingTop: 8,
+    borderTopWidth: 0.5,
+    borderTopColor: 'rgba(0,0,0,0.1)',
   },
   metaInfo: {
     flexDirection: 'row',

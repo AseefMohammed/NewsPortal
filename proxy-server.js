@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
   
   // CORS headers for all requests
   const corsHeaders = {
-    'Access-Control-Allow-Origin': 'http://localhost:8081',
+    'Access-Control-Allow-Origin': 'http://localhost:8080',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, Accept',
     'Access-Control-Allow-Credentials': 'true'
@@ -26,7 +26,7 @@ const server = http.createServer((req, res) => {
   // Backend request options
   const backendOptions = {
     hostname: 'localhost',
-    port: 8001,
+    port: 8080,
     path: parsedUrl.path,
     method: req.method,
     headers: {
@@ -67,6 +67,6 @@ const PORT = 8002;
 server.listen(PORT, () => {
   console.log(`🔗 Proxy server running on http://localhost:${PORT}`);
   console.log(`📱 Proxying requests from web app to backend`);
-  console.log(`🌐 Web App: http://localhost:8081 -> Proxy: http://localhost:${PORT} -> Backend: http://localhost:8001`);
+  console.log(`🌐 Web App: http://localhost:8080 -> Proxy: http://localhost:${PORT} -> Backend: http://localhost:8080`);
   console.log(`\n🚀 Ready to test full backend connectivity!`);
 });
