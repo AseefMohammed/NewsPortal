@@ -11,4 +11,4 @@ requests
 beautifulsoup4
 transformers
 nltk
-sklearn
+scikit-learn
