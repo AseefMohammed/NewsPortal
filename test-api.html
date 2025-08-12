@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsPortal API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .article { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .title { color: #2c3e50; font-size: 1.5em; margin-bottom: 10px; }
+        .content { color: #34495e; line-height: 1.6; margin: 10px 0; }
+        .meta { color: #7f8c8d; font-size: 0.9em; }
+        .error { color: #e74c3c; background: #fadbd8; padding: 10px; border-radius: 4px; }
+        .success { color: #27ae60; background: #d5f4e6; padding: 10px; border-radius: 4px; }
+        button { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NewsPortal API Test</h1>
+        <div id="status"></div>
+        
+        <button onclick="testConnection()">Test API Connection</button>
+        <button onclick="loadNews()">Load News</button>
+        <button onclick="loadSpecificArticle()">Load Article #1</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://news-portal-asn3.vercel.app';
+        
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.className = isError ? 'error' : 'success';
+            status.innerHTML = message;
+        }
+        
+        function showResults(html) {
+            document.getElementById('results').innerHTML = html;
+        }
+        
+        async function testConnection() {
+            try {
+                showStatus('Testing connection...');
+                const response = await fetch(`${API_BASE}/test`);
+                const data = await response.json();
+                showStatus(`✅ Connection successful: ${data.message}`);
+            } catch (error) {
+                showStatus(`❌ Connection failed: ${error.message}`, true);
+            }
+        }
+        
+        async function loadNews() {
+            try {
+                showStatus('Loading news...');
+                const response = await fetch(`${API_BASE}/news?limit=3`);
+                const articles = await response.json();
+                
+                if (!Array.isArray(articles)) {
+                    throw new Error('Invalid response format');
+                }
+                
+                let html = `<h2>📰 News Articles (${articles.length} items)</h2>`;
+                
+                articles.forEach(article => {
+                    const hasContent = article.content && article.content.length > 0;
+                    const contentPreview = hasContent ? 
+                        article.content.substring(0, 200) + '...' : 
+                        'No content available';
+                    
+                    html += `
+                        <div class="article">
+                            <div class="title">${article.title || 'No title'}</div>
+                            <div class="meta">
+                                ID: ${article.id} | Source: ${article.source || 'Unknown'} | 
+                                Content Length: ${hasContent ? article.content.length : 0} chars
+                            </div>
+                            <div class="content">
+                                <strong>Content:</strong> ${contentPreview}
+                            </div>
+                            <div class="content">
+                                <strong>Excerpt:</strong> ${article.excerpt || 'No excerpt'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                showResults(html);
+                showStatus(`✅ Loaded ${articles.length} articles successfully`);
+                
+            } catch (error) {
+                showStatus(`❌ Failed to load news: ${error.message}`, true);
+            }
+        }
+        
+        async function loadSpecificArticle() {
+            try {
+                showStatus('Loading article #1...');
+                const response = await fetch(`${API_BASE}/news/1`);
+                const article = await response.json();
+                
+                if (article.error) {
+                    throw new Error(article.error);
+                }
+                
+                const hasContent = article.content && article.content.length > 0;
+                
+                const html = `
+                    <h2>📄 Article #1 Details</h2>
+                    <div class="article">
+                        <div class="title">${article.title || 'No title'}</div>
+                        <div class="meta">
+                            ID: ${article.id} | Source: ${article.source || 'Unknown'} | 
+                            Content Length: ${hasContent ? article.content.length : 0} chars |
+                            Has Content: ${hasContent ? '✅ Yes' : '❌ No'}
+                        </div>
+                        <div class="content">
+                            <strong>Full Content:</strong><br>
+                            ${hasContent ? article.content : 'No content available'}
+                        </div>
+                    </div>
+                `;
+                
+                showResults(html);
+                showStatus(`✅ Article loaded successfully`);
+                
+            } catch (error) {
+                showStatus(`❌ Failed to load article: ${error.message}`, true);
+            }
+        }
+        
+        // Auto-test connection on load
+        window.onload = function() {
+            testConnection();
+        };
+    </script>
+</body>
+</html>
