@@ -10,3 +10,4 @@ aiohttp
 requests
 beautifulsoup4
 transformers
+nltk
