@@ -1,3 +1,10 @@
+# Remove local venv and node_modules from git and workspace
+backend/venv/
+mobile/node_modules/
+__pycache__/
+backend/__pycache__/
+news.db
+backend/news.db
 # Dependencies
 node_modules/
 __pycache__/
