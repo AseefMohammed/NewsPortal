@@ -12,3 +12,4 @@ beautifulsoup4
 transformers
 nltk
 scikit-learn
+lxml
