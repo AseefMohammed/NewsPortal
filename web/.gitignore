@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore problematic files for web build
+src/AISummaryComponent.tsx
+src/GlowButton.tsx
+src/GradientBackground.tsx
+src/EntityCard.tsx
+src/AnimatedCard.tsx
+src/PersonalizedFeedComponent.tsx
