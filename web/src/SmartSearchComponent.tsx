@@ -1,22 +1,21 @@
-
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 
-const SmartSearchComponent = ({ onSearchResults, onClose }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [searchMode, setSearchMode] = useState('semantic'); // 'semantic' or 'keyword'
+interface Suggestion {
+  text: string;
+  type?: string;
+}
+
+interface SmartSearchComponentProps {
+  onSearchResults: (results: any) => void;
+  onClose: () => void;
+}
+
+const SmartSearchComponent: React.FC<SmartSearchComponentProps> = ({ onSearchResults, onClose }) => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [searchMode, setSearchMode] = useState<'semantic' | 'keyword'>('semantic');
 
   useEffect(() => {
     if (searchQuery.length > 2) {
@@ -28,7 +27,6 @@ const SmartSearchComponent = ({ onSearchResults, onClose }) => {
 
   const fetchSuggestions = async () => {
     try {
-      // This would call your AI-powered search suggestions endpoint
       const response = await fetch(`http://localhost:9100/search/suggestions?q=${encodeURIComponent(searchQuery)}`);
       const data = await response.json();
       setSuggestions(data.suggestions || []);
@@ -37,24 +35,19 @@ const SmartSearchComponent = ({ onSearchResults, onClose }) => {
     }
   };
 
-  const performSearch = async (query = searchQuery) => {
+  const performSearch = async (query: string = searchQuery) => {
     if (!query.trim()) return;
-
     setIsLoading(true);
     try {
       const endpoint = searchMode === 'semantic' 
         ? `/search/semantic?q=${encodeURIComponent(query)}`
         : `/search/keyword?q=${encodeURIComponent(query)}`;
-      
       const response = await fetch(`http://localhost:9100${endpoint}`);
       const results = await response.json();
-      
-      // Add to recent searches
-      setRecentSearches(prev => {
+      setRecentSearches((prev: string[]) => {
         const updated = [query, ...prev.filter(item => item !== query)].slice(0, 5);
         return updated;
       });
-      
       onSearchResults(results);
     } catch (error) {
       console.error('Search error:', error);
@@ -63,253 +56,102 @@ const SmartSearchComponent = ({ onSearchResults, onClose }) => {
     }
   };
 
-  const renderSuggestion = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.suggestionItem}
-      onPress={() => {
+  const renderSuggestion = (item: Suggestion) => (
+    <button 
+      className="flex items-center w-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded"
+      onClick={() => {
         setSearchQuery(item.text);
         performSearch(item.text);
       }}
+      type="button"
     >
-      <MaterialIcons name="search" size={16} color="#6B7280" />
-      <Text style={styles.suggestionText}>{item.text}</Text>
+      <span className="mr-2">
+        <svg width="16" height="16" fill="none" stroke="#6B7280" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <span className="flex-1 text-gray-700 dark:text-gray-200">{item.text}</span>
       {item.type && (
-        <View style={styles.suggestionType}>
-          <Text style={styles.suggestionTypeText}>{item.type}</Text>
-        </View>
+        <span className="ml-2 px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-xs text-gray-600 dark:text-gray-300">{item.type}</span>
       )}
-    </TouchableOpacity>
+    </button>
   );
 
-  const renderRecentSearch = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.recentItem}
-      onPress={() => {
+  const renderRecentSearch = (item: string) => (
+    <button 
+      className="flex items-center w-full px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded"
+      onClick={() => {
         setSearchQuery(item);
         performSearch(item);
       }}
+      type="button"
     >
-      <MaterialIcons name="history" size={16} color="#6B7280" />
-      <Text style={styles.recentText}>{item}</Text>
-    </TouchableOpacity>
+      <span className="mr-2">
+        <svg width="16" height="16" fill="none" stroke="#6B7280" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <span className="flex-1 text-gray-700 dark:text-gray-200">{item}</span>
+    </button>
   );
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <MaterialIcons name="arrow-back" size={24} color="#1F2937" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Smart Search</Text>
-        <View style={styles.placeholder} />
-      </View>
-
-      {/* Search Input */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <MaterialIcons name="search" size={20} color="#6B7280" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search news with AI..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={() => performSearch()}
-            autoFocus
-          />
-          {isLoading && <ActivityIndicator size="small" color="#4F46E5" />}
-        </View>
-
-        {/* Search Mode Toggle */}
-        <View style={styles.modeToggle}>
-          <TouchableOpacity
-            style={[styles.modeButton, searchMode === 'semantic' && styles.modeButtonActive]}
-            onPress={() => setSearchMode('semantic')}
-          >
-            <MaterialIcons name="psychology" size={16} color={searchMode === 'semantic' ? '#FFFFFF' : '#6B7280'} />
-            <Text style={[styles.modeText, searchMode === 'semantic' && styles.modeTextActive]}>
-              AI Search
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[styles.modeButton, searchMode === 'keyword' && styles.modeButtonActive]}
-            onPress={() => setSearchMode('keyword')}
-          >
-            <MaterialIcons name="text-fields" size={16} color={searchMode === 'keyword' ? '#FFFFFF' : '#6B7280'} />
-            <Text style={[styles.modeText, searchMode === 'keyword' && styles.modeTextActive]}>
-              Keyword
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Content */}
-      <View style={styles.content}>
-        {suggestions.length > 0 ? (
-          <View>
-            <Text style={styles.sectionTitle}>Suggestions</Text>
-            <FlatList
-              data={suggestions}
-              renderItem={renderSuggestion}
-              keyExtractor={(item, index) => index.toString()}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-        ) : recentSearches.length > 0 ? (
-          <View>
-            <Text style={styles.sectionTitle}>Recent Searches</Text>
-            <FlatList
-              data={recentSearches}
-              renderItem={renderRecentSearch}
-              keyExtractor={(item, index) => index.toString()}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-        ) : (
-          <View style={styles.emptyState}>
-            <MaterialIcons name="search" size={48} color="#D1D5DB" />
-            <Text style={styles.emptyStateText}>
-              {searchMode === 'semantic' 
-                ? 'Try natural language queries like "positive tech news" or "healthcare breakthroughs"'
-                : 'Search for specific keywords or phrases'
-              }
-            </Text>
-          </View>
-        )}
-      </View>
-    </View>
+    <div className="p-4 bg-white dark:bg-neutral-900 rounded shadow max-w-md mx-auto">
+      <div className="flex items-center mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search..."
+          className="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-neutral-800 text-gray-900 dark:text-gray-100 focus:outline-none"
+        />
+        <button onClick={onClose} className="ml-2 px-2 py-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300" type="button">
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div className="mb-2 flex gap-2">
+        <button
+          className={`px-3 py-1 rounded ${searchMode === 'semantic' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'}`}
+          onClick={() => setSearchMode('semantic')}
+          type="button"
+        >Semantic</button>
+        <button
+          className={`px-3 py-1 rounded ${searchMode === 'keyword' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'}`}
+          onClick={() => setSearchMode('keyword')}
+          type="button"
+        >Keyword</button>
+      </div>
+      {isLoading && (
+        <div className="flex items-center justify-center py-4">
+          <svg className="animate-spin h-5 w-5 text-blue-600" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+          </svg>
+        </div>
+      )}
+      {suggestions.length > 0 && (
+        <div className="mb-4">
+          <div className="font-semibold text-gray-700 dark:text-gray-200 mb-2">Suggestions</div>
+          <div className="space-y-1">
+            {suggestions.map((item, idx) => (
+              <React.Fragment key={idx}>{renderSuggestion(item)}</React.Fragment>
+            ))}
+          </div>
+        </div>
+      )}
+      {recentSearches.length > 0 && (
+        <div className="mb-2">
+          <div className="font-semibold text-gray-700 dark:text-gray-200 mb-2">Recent Searches</div>
+          <div className="space-y-1">
+            {recentSearches.map((item, idx) => (
+              <React.Fragment key={idx}>{renderRecentSearch(item)}</React.Fragment>
+            ))}
+          </div>
+        </div>
+      )}
+      <button
+        onClick={() => performSearch()}
+        className="w-full mt-4 px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+        type="button"
+      >Search</button>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  closeButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
-  },
-  placeholder: {
-    width: 32,
-  },
-  searchContainer: {
-    padding: 16,
-  },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#1F2937',
-    marginLeft: 8,
-  },
-  modeToggle: {
-    flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
-    borderRadius: 8,
-    padding: 4,
-  },
-  modeButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  modeButtonActive: {
-    backgroundColor: '#4F46E5',
-  },
-  modeText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-    marginLeft: 4,
-  },
-  modeTextActive: {
-    color: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 12,
-  },
-  suggestionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  suggestionText: {
-    flex: 1,
-    fontSize: 15,
-    color: '#374151',
-    marginLeft: 12,
-  },
-  suggestionType: {
-    backgroundColor: '#EEF2FF',
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  suggestionTypeText: {
-    fontSize: 12,
-    color: '#4F46E5',
-    fontWeight: '500',
-  },
-  recentItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  recentText: {
-    fontSize: 15,
-    color: '#6B7280',
-    marginLeft: 12,
-  },
-  emptyState: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: '#6B7280',
-    textAlign: 'center',
-    marginTop: 16,
-    lineHeight: 24,
-  },
-});
 
 export default SmartSearchComponent;
