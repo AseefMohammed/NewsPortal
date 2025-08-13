@@ -2,18 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/enhanced_main.py",
-      "use": "@vercel/python"
+      "src": "mobile/web-build/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/enhanced_main.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "backend/enhanced_main.py"
-    }
+    { "src": "/(.*)", "dest": "/mobile/web-build/$1" }
   ]
 }
