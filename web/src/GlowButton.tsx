@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Animated } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { button, span } from 'react-native-web';
 import { theme } from '../../styles/theme';
 
 const GlowButton = ({ 
@@ -101,16 +100,15 @@ const GlowButton = ({
         style,
       ]}
     >
-      <TouchableOpacity
+      <button
         style={[
           ...getButtonStyle(),
           disabled && styles.buttonDisabled,
         ]}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+        onClick={onPress}
+        onMouseDown={handlePressIn}
+        onMouseUp={handlePressOut}
         disabled={disabled || loading}
-        activeOpacity={0.8}
         {...props}
       >
         {loading ? (
@@ -122,27 +120,26 @@ const GlowButton = ({
         ) : (
           <>
             {icon && (
-              <MaterialIcons 
-                name={icon} 
-                size={size === 'small' ? 16 : size === 'large' ? 24 : 20} 
-                color={getTextStyle().color}
+              <span 
+                className={`icon-${icon} ${size === 'small' ? 'icon-sm' : size === 'large' ? 'icon-lg' : 'icon-md'}`}
                 style={{ marginRight: title ? 8 : 0 }}
               />
             )}
             {title && (
-              <Text style={[styles.text, styles[`text${size.charAt(0).toUpperCase() + size.slice(1)}`], getTextStyle()]}>
+              <span className={`text ${size}`} style={getTextStyle()}>
                 {title}
-              </Text>
+              </span>
             )}
           </>
         )}
-      </TouchableOpacity>
+      </button>
     </Animated.View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   button: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -227,6 +224,7 @@ const styles = StyleSheet.create({
   },
   
   loadingContainer: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -237,6 +235,6 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: theme.colors.textInverse,
   },
-});
+};
 
 export default GlowButton;

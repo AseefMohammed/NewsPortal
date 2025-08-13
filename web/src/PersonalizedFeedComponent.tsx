@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl
+  div,
+  button,
+  span,
+  style,
+  ul,
+  li,
+  refreshControl
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -54,81 +54,81 @@ const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
   };
 
   const renderFeedTypeButton = (type, label, icon) => (
-    <TouchableOpacity
+    <button
       style={[styles.feedTypeButton, feedType === type && styles.feedTypeButtonActive]}
-      onPress={() => setFeedType(type)}
+      onClick={() => setFeedType(type)}
     >
       <MaterialIcons 
         name={icon} 
         size={16} 
         color={feedType === type ? '#FFFFFF' : '#6B7280'} 
       />
-      <Text style={[styles.feedTypeText, feedType === type && styles.feedTypeTextActive]}>
+      <span style={[styles.feedTypeText, feedType === type && styles.feedTypeTextActive]}>
         {label}
-      </Text>
-    </TouchableOpacity>
+      </span>
+    </button>
   );
 
   const renderNewsItem = ({ item, index }) => (
-    <TouchableOpacity 
+    <button 
       style={styles.newsItem}
-      onPress={() => onNewsItemPress(item)}
+      onClick={() => onNewsItemPress(item)}
     >
-      <View style={styles.newsHeader}>
-        <Text style={styles.newsTitle} numberOfLines={2}>
+      <div style={styles.newsHeader}>
+        <span style={styles.newsTitle} numberOfLines={2}>
           {item.title}
-        </Text>
+        </span>
         {item.ai_confidence && (
-          <View style={styles.aiIndicator}>
+          <div style={styles.aiIndicator}>
             <MaterialIcons name="auto-awesome" size={12} color="#4F46E5" />
-          </View>
+          </div>
         )}
-      </View>
+      </div>
 
       {item.ai_summary && (
-        <Text style={styles.aiSummary} numberOfLines={2}>
+        <span style={styles.aiSummary} numberOfLines={2}>
           {item.ai_summary}
-        </Text>
+        </span>
       )}
 
-      <View style={styles.newsFooter}>
-        <View style={styles.newsMetadata}>
-          <Text style={styles.newsSource}>{item.source}</Text>
-          <Text style={styles.newsDot}>•</Text>
-          <Text style={styles.newsTime}>
+      <div style={styles.newsFooter}>
+        <div style={styles.newsMetadata}>
+          <span style={styles.newsSource}>{item.source}</span>
+          <span style={styles.newsDot}>•</span>
+          <span style={styles.newsTime}>
             {new Date(item.published_at).toLocaleDateString()}
-          </Text>
-        </View>
+          </span>
+        </div>
 
         {item.sentiment && (
-          <View style={[styles.sentimentBadge, { backgroundColor: getSentimentColor(item.sentiment) }]}>
-            <Text style={styles.sentimentText}>
+          <div style={[styles.sentimentBadge, { backgroundColor: getSentimentColor(item.sentiment) }]}>
+            <span style={styles.sentimentText}>
               {item.sentiment.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+            </span>
+          </div>
         )}
-      </View>
+      </div>
 
       {item.topics && item.topics.length > 0 && (
-        <View style={styles.topicsContainer}>
+        <div style={styles.topicsContainer}>
           {item.topics.slice(0, 3).map((topic, topicIndex) => (
-            <View key={topicIndex} style={styles.topicTag}>
-              <Text style={styles.topicText}>{topic}</Text>
-            </View>
+            <div key={topicIndex} style={styles.topicTag}>
+              <span style={styles.topicText}>{topic}</span>
+            </div>
           ))}
-        </View>
+        </div>
       )}
 
       {/* Personalization Score */}
       {item.personalization_score && (
-        <View style={styles.personalizationScore}>
+        <div style={styles.personalizationScore}>
           <MaterialIcons name="person" size={12} color="#10B981" />
-          <Text style={styles.scoreText}>
+          <span style={styles.scoreText}>
             {Math.round(item.personalization_score * 100)}% match
-          </Text>
-        </View>
+          </span>
+        </div>
       )}
-    </TouchableOpacity>
+    </button>
   );
 
   const getSentimentColor = (sentiment) => {
@@ -140,30 +140,30 @@ const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <div style={styles.container}>
       {/* Feed Type Selector */}
-      <View style={styles.feedTypeSelector}>
+      <div style={styles.feedTypeSelector}>
         {renderFeedTypeButton('recommended', 'For You', 'person')}
         {renderFeedTypeButton('trending', 'Trending', 'trending-up')}
         {renderFeedTypeButton('recent', 'Recent', 'schedule')}
-      </View>
+      </div>
 
       {/* Feed List */}
-      <FlatList
+      <ul
         data={feedData}
         renderItem={renderNewsItem}
         keyExtractor={(item) => item.id.toString()}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <refreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.feedList}
       />
-    </View>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = style({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',

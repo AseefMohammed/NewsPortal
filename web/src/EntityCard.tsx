@@ -1,70 +1,66 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import './EntityCard.css';
 
 const EntityCard = ({ entity }) => {
   return (
-    <View style={styles.card}>
-      <Text style={styles.name}>{entity.name}</Text>
-      <Text style={styles.info}>Brief info about {entity.name} will appear here.</Text>
-      <Text style={styles.news}>Latest news headline will appear here.</Text>
-      <TouchableOpacity style={styles.link}>
-        <Text style={styles.linkText}>News Channel Link</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.archiveButton}>
-        <Text style={styles.archiveText}>Archive</Text>
-      </TouchableOpacity>
-    </View>
+    <div className="card">
+      <span className="name">{entity.name}</span>
+      <span className="info">Brief info about {entity.name} will appear here.</span>
+      <span className="news">Latest news headline will appear here.</span>
+      <a href="#" className="link">News Channel Link</a>
+      <button className="archiveButton">Archive</button>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginVertical: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#007bff',
-    marginBottom: 6,
-  },
-  info: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 4,
-  },
-  news: {
-    fontSize: 15,
-    color: '#333',
-    marginBottom: 8,
-  },
-  link: {
-    marginBottom: 8,
-  },
-  linkText: {
-    color: '#007bff',
-    textDecorationLine: 'underline',
-    fontSize: 14,
-  },
-  archiveButton: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#f1c40f',
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-  },
-  archiveText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-});
+export default EntityCard;
+```
 
-export default EntityCard; 
+```css
+/* EntityCard.css */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 8px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 6px;
+}
+
+.info {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.news {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.link {
+  margin-bottom: 8px;
+  color: #007bff;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.archiveButton {
+  align-self: flex-end;
+  background-color: #f1c40f;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+```

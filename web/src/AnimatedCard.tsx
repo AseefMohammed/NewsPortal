@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { theme } from '../../styles/theme';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -100,35 +99,36 @@ const AnimatedCard = ({
 
   if (onPress) {
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+      <button
+        style={{ all: 'unset', cursor: 'pointer' }}
+        onClick={onPress}
+        onMouseDown={handlePressIn}
+        onMouseUp={handlePressOut}
         {...props}
       >
-        <Animated.View style={cardStyle}>
+        <div style={cardStyle}>
           {children}
-        </Animated.View>
-      </TouchableOpacity>
+        </div>
+      </button>
     );
   }
 
   return (
-    <Animated.View style={cardStyle} {...props}>
+    <div style={cardStyle} {...props}>
       {children}
-    </Animated.View>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   card: {
     backgroundColor: theme.colors.card,
     borderRadius: theme.borderRadius.xl,
     padding: theme.spacing.lg,
     marginBottom: theme.spacing.lg,
     ...theme.shadows.md,
+    transition: 'transform 0.6s, opacity 0.6s',
   },
-});
+};
 
 export default AnimatedCard;

@@ -1,8 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
 import { theme } from '../../styles/theme';
-
-const { width, height } = Dimensions.get('window');
 
 const GradientBackground = ({ 
   children, 
@@ -24,24 +21,26 @@ const GradientBackground = ({
   };
 
   return (
-    <View style={[styles.container, getGradientStyle(), style]}>
+    <div style={{ ...styles.container, ...getGradientStyle(), ...style }}>
       {/* Background Effects */}
-      <View style={styles.backgroundEffects}>
-        <View style={[styles.glowCircle, styles.glowCircle1]} />
-        <View style={[styles.glowCircle, styles.glowCircle2]} />
-        <View style={[styles.glowCircle, styles.glowCircle3]} />
-      </View>
+      <div style={styles.backgroundEffects}>
+        <div style={{ ...styles.glowCircle, ...styles.glowCircle1 }} />
+        <div style={{ ...styles.glowCircle, ...styles.glowCircle2 }} />
+        <div style={{ ...styles.glowCircle, ...styles.glowCircle3 }} />
+      </div>
       
       {/* Content */}
-      <View style={styles.content}>
+      <div style={styles.content}>
         {children}
-      </View>
-    </View>
+      </div>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
+    display: 'flex',
+    flexDirection: 'column',
     flex: 1,
     position: 'relative',
   },
@@ -62,32 +61,32 @@ const styles = StyleSheet.create({
   
   glowCircle: {
     position: 'absolute',
-    borderRadius: 200,
+    borderRadius: '50%',
     opacity: 0.1,
   },
   
   glowCircle1: {
-    width: 300,
-    height: 300,
+    width: '300px',
+    height: '300px',
     backgroundColor: theme.colors.primary,
-    top: -100,
-    right: -100,
+    top: '-100px',
+    right: '-100px',
   },
   
   glowCircle2: {
-    width: 200,
-    height: 200,
+    width: '200px',
+    height: '200px',
     backgroundColor: theme.colors.secondary,
-    bottom: -50,
-    left: -50,
+    bottom: '-50px',
+    left: '-50px',
   },
   
   glowCircle3: {
-    width: 150,
-    height: 150,
+    width: '150px',
+    height: '150px',
     backgroundColor: theme.colors.accent,
-    top: height * 0.4,
-    left: -75,
+    top: '40%',
+    left: '-75px',
   },
   
   // Gradient variants
@@ -106,6 +105,6 @@ const styles = StyleSheet.create({
   gradientCard: {
     backgroundColor: theme.colors.card,
   },
-});
+};
 
 export default GradientBackground;
