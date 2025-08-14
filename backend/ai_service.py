@@ -224,7 +224,8 @@ class AdvancedAIService:
     async def _openai_summarize(self, text: str) -> Optional[str]:
         """Summarize using OpenAI GPT"""
         try:
-            response = await openai.ChatCompletion.acreate(
+            # For openai>=1.0.0, use openai.resources.chat.completions.create
+            response = await openai.resources.chat.completions.create(
                 model="gpt-4-turbo-preview",
                 messages=[
                     {
@@ -239,9 +240,8 @@ class AdvancedAIService:
                 max_tokens=150,
                 temperature=0.3
             )
-            
+            # The new API returns response.choices[0].message.content
             return response.choices[0].message.content.strip()
-            
         except Exception as e:
             logger.error(f"OpenAI summarization error: {e}")
             return None

@@ -1,3 +1,4 @@
+// ...existing code from App.js...
 import React from 'react';
 import { Text, View } from 'react-native';
 
@@ -6,16 +7,16 @@ let SavedArticlesProvider, ThemeProvider, NavigationContainer, createNativeStack
 let LoginScreen, DashboardScreen, SavesScreen, ProfileScreen, MainTabs, NewsDetailScreen;
 let importError = null;
 try {
-  SavedArticlesProvider = require('./context/SavedArticlesContext').SavedArticlesProvider;
-  ThemeProvider = require('./context/ThemeContext').ThemeProvider;
+  SavedArticlesProvider = require('./mobile/context/SavedArticlesContext').SavedArticlesProvider;
+  ThemeProvider = require('./mobile/context/ThemeContext').ThemeProvider;
   NavigationContainer = require('@react-navigation/native').NavigationContainer;
   createNativeStackNavigator = require('@react-navigation/native-stack').createNativeStackNavigator;
-  LoginScreen = require('./screens/LoginScreen').default;
-  DashboardScreen = require('./screens/DashboardScreen').default;
-  SavesScreen = require('./screens/SavesScreen').default;
-  ProfileScreen = require('./screens/ProfileScreen').default;
-  MainTabs = require('./screens/MainTabs').default;
-  NewsDetailScreen = require('./screens/NewsDetailScreen').default;
+  LoginScreen = require('./mobile/screens/LoginScreen').default;
+  DashboardScreen = require('./mobile/screens/DashboardScreen').default;
+  SavesScreen = require('./mobile/screens/SavesScreen').default;
+  ProfileScreen = require('./mobile/screens/ProfileScreen').default;
+  MainTabs = require('./mobile/screens/MainTabs').default;
+  NewsDetailScreen = require('./mobile/screens/NewsDetailScreen').default;
 } catch (e) {
   importError = e;
 }

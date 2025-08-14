@@ -22,7 +22,7 @@ console.log('🌐 Platform detection:', {
 });
 
 // Production URL - Your Vercel deployment
-const PRODUCTION_URL = 'https://news-portal-asn3.vercel.app';
+const PRODUCTION_URL = 'https://newsportal-3.onrender.com';
 
 // Development URL for local testing
 const DEVELOPMENT_URL = Platform.OS === 'web' 
@@ -84,7 +84,7 @@ class AIService {
   }
   // Get latest news with AI enhancements from enhanced API
   async getLatestNews(options = {}) {
-    const { limit = 10, category = null } = options;
+    const { limit = 20, category = null } = options;
     try {
       const cacheKey = `latest_news_${limit}_${category || 'all'}`;
       const cached = await this.getCache(cacheKey);
@@ -107,7 +107,7 @@ class AIService {
 
   // Get trending news from enhanced API
   async getTrendingNews(options = {}) {
-    const { limit = 10 } = options;
+    const { limit = 20 } = options;
     try {
       const params = new URLSearchParams();
       if (limit) params.append('limit', limit.toString());
