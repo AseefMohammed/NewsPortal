@@ -1,3 +1,18 @@
+app = FastAPI(title="NewsPortal API v2.0", description="Enhanced AI-Powered News Portal API", version="2.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ...existing code...
+
+# Mobile health check endpoint
+@app.get("/test")
+async def test_endpoint():
+    return {"message": "Backend is working!", "status": "success"}
 """
 Enhanced Main Application with AI-Powered News Aggregation
 Modern FastAPI application with comprehensive news processing capabilities
@@ -162,8 +177,9 @@ async def health_check():
     
     # Check database
     try:
+        from sqlalchemy import text
         db = next(get_db())
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         db.close()
         health_status["components"]["database"] = "healthy"
     except Exception as e:
@@ -277,4 +293,4 @@ else:
     # Production configuration for Render and similar platforms
     port = int(os.environ.get("PORT", 8000))
     logger.info(f"NewsPortal API loaded for production on port {port}")
-    uvicorn.run("enhanced_main:app", host="0.0.0.0", port=port)
+    # Do not call uvicorn.run() here; start the server via CLI or external process
