@@ -1,8 +1,27 @@
+def test():
+    return {"status": "ok"}
+
 from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends
+app = FastAPI(title="NewsPortal API", description="AI-Powered News Portal API", version="1.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # TODO: Restrict in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ...existing code...
+
+@app.get("/test")
+def test():
+    return {"status": "ok"}
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from pydantic import BaseModel
 import os
+import threading
 
 # Try importing database dependencies - make them optional for Vercel
 try:
@@ -128,11 +147,15 @@ else:
     def get_db():
         yield None
 
+
+
 @app.on_event("startup")
 async def startup_event():
-    thread = threading.Thread(target=background_news_fetcher, daemon=True)
-    thread.start()
-    print("Background news fetcher started")
+    if DATABASE_AVAILABLE and 'background_news_fetcher' in globals():
+        thread = threading.Thread(target=background_news_fetcher, daemon=True)
+        thread.start()
+        print("Background news fetcher started")
+    print("📱 NewsPortal API started successfully")
 
 class NewsOut(BaseModel):
     title: str
