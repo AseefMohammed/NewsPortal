@@ -1,18 +1,4 @@
-app = FastAPI(title="NewsPortal API v2.0", description="Enhanced AI-Powered News Portal API", version="2.0.0")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-# ...existing code...
-
-# Mobile health check endpoint
-@app.get("/test")
-async def test_endpoint():
-    return {"message": "Backend is working!", "status": "success"}
 """
 Enhanced Main Application with AI-Powered News Aggregation
 Modern FastAPI application with comprehensive news processing capabilities
@@ -132,6 +118,11 @@ app.include_router(enhanced_api_router)
 # Static files (if needed)
 if os.path.exists("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Mobile health check endpoint
+@app.get("/test")
+async def test_endpoint():
+    return {"message": "Backend is working!", "status": "success"}
 
 # Root endpoint
 @app.get("/")
