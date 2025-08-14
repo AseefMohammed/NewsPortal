@@ -274,5 +274,7 @@ if __name__ == "__main__":
     logger.info("Starting NewsPortal API in development mode")
     uvicorn.run("enhanced_main:app", **config)
 else:
-    # Production configuration
-    logger.info("NewsPortal API loaded for production")
+    # Production configuration for Render and similar platforms
+    port = int(os.environ.get("PORT", 8000))
+    logger.info(f"NewsPortal API loaded for production on port {port}")
+    uvicorn.run("enhanced_main:app", host="0.0.0.0", port=port)
