@@ -13,3 +13,9 @@ transformers
 nltk
 scikit-learn
 lxml
+psycopg2-binary
+mysqlclient
+feedparser
+python-multipart
+torch
+numpy
