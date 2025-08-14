@@ -5,7 +5,7 @@ pydantic
 python-dotenv
 aiofiles
 httpx
-openai
+openai==0.28
 aiohttp
 requests
 beautifulsoup4
