@@ -21,7 +21,7 @@ console.log('🌐 Platform detection:', {
   navigatorProduct: typeof window !== 'undefined' && window.navigator ? window.navigator.product : 'undefined'
 });
 
-// Production URL - Your Vercel deployment
+// Production URL - Your Render deployment
 const PRODUCTION_URL = 'https://newsportal-3.onrender.com';
 
 // Development URL for local testing

@@ -256,21 +256,20 @@ class AdvancedAIService:
         """Summarize using local transformer model"""
         if not self.summarizer:
             return None
-            
         try:
             # Truncate text to model limits
-            max_length = min(1024, len(text.split()))
-            truncated_text = " ".join(text.split()[:max_length])
-            
+            input_length = len(text.split())
+            max_length = min(150, max(16, int(input_length * 0.8)))
+            min_length = min(50, max(10, int(input_length * 0.3)))
+            truncated_text = " ".join(text.split()[:min(1024, input_length)])
+
             summary_result = self.summarizer(
                 truncated_text,
-                max_length=150,
-                min_length=50,
+                max_length=max_length,
+                min_length=min_length,
                 do_sample=False
             )
-            
             return summary_result[0]["summary_text"]
-            
         except Exception as e:
             logger.error(f"Transformer summarization error: {e}")
             return None
