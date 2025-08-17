@@ -27,6 +27,12 @@ router = APIRouter(prefix="/api/v2", tags=["Enhanced News API"])
 # Initialize news aggregator
 news_aggregator = ModernNewsAggregator(openai_api_key="YOUR_OPENAI_KEY")  # Replace with actual key
 
+# Mobile health check endpoint (router version)
+@router.get("/test")
+async def test_router_endpoint():
+    """Mobile health check endpoint (router version)"""
+    return {"message": "Backend is working! (router)", "status": "success"}
+
 @router.get("/news/latest")
 async def get_latest_news(
     db: Session = Depends(get_db),
