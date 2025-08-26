@@ -9,19 +9,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
 from contextlib import asynccontextmanager
 import asyncio
 import logging
 from datetime import datetime
 import uvicorn
 import os
+import uuid
 
 # Import our modules
 from database import engine, get_db, Base
-from enhanced_models import NewsArticle, UserInteraction, NewsSource, TrendingTopic
-from enhanced_api_routes import router as enhanced_api_router
-from modern_news_aggregator import ModernNewsAggregator, fetch_and_update_news
-from ai_service import get_ai_service
+from .enhanced_models import NewsArticle, UserInteraction, NewsSource, TrendingTopic
+from .enhanced_api_routes import router as enhanced_api_router
+from .modern_news_aggregator import ModernNewsAggregator, fetch_and_update_news
+from .ai_service import get_ai_service
 
 # Configure logging
 logging.basicConfig(
@@ -73,6 +76,14 @@ async def lifespan(app: FastAPI):
         logger.info("AI service initialized")
     except Exception as e:
         logger.error(f"AI service initialization error: {e}")
+
+    # Initialize rate limiter
+    try:
+        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
+        await FastAPILimiter.init(redis_url)
+        logger.info("Rate limiter initialized")
+    except Exception as e:
+        logger.error(f"Rate limiter initialization error: {e}")
     
     # Start background tasks
     asyncio.create_task(periodic_news_update())
@@ -104,7 +115,7 @@ app = FastAPI(
 # Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
@@ -225,7 +236,8 @@ async def general_exception_handler(request: Request, exc: Exception):
 # Middleware for request logging
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    """Log all requests"""
+    """Log all requests with unique request ID"""
+    request_id = request.headers.get('X-Request-ID', str(uuid.uuid4()))
     start_time = datetime.now()
     
     response = await call_next(request)
@@ -233,17 +245,23 @@ async def log_requests(request: Request, call_next):
     process_time = (datetime.now() - start_time).total_seconds()
     
     logger.info(
+        f"RequestID: {request_id} - "
         f"{request.method} {request.url} - "
         f"Status: {response.status_code} - "
         f"Time: {process_time:.3f}s"
     )
     
+    response.headers["X-Request-ID"] = request_id
+    
     return response
 
 # Legacy endpoints for backward compatibility
 @app.get("/news")
-async def get_news_legacy(db=Depends(get_db)):
-    """Legacy news endpoint for backward compatibility"""
+async def get_news_legacy(
+    db=Depends(get_db),
+    rate_limiter: RateLimiter = Depends(RateLimiter(times=10, seconds=60))
+):
+    """Legacy news endpoint for backward compatibility with rate limiting"""
     try:
         articles = db.query(NewsArticle).order_by(NewsArticle.published_at.desc()).limit(20).all()
         

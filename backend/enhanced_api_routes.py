@@ -13,7 +13,7 @@ import asyncio
 import logging
 
 from database import get_db
-from enhanced_models import NewsArticle, UserInteraction, TrendingTopic, NewsSource
+from .enhanced_models import NewsArticle, UserInteraction, TrendingTopic, NewsSource
 from modern_news_aggregator import ModernNewsAggregator
 import openai
 

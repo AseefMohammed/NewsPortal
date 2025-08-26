@@ -83,7 +83,7 @@ class NewsPortalSetup:
         
         try:
             # Import database models
-            from enhanced_models import Base, NewsArticle, NewsSource, UserInteraction, TrendingTopic
+            from .enhanced_models import Base, NewsArticle, NewsSource, UserInteraction, TrendingTopic
             from database import engine
             
             # Create all tables
@@ -149,7 +149,7 @@ class NewsPortalSetup:
         logger.info("Inserting sample data...")
         
         try:
-            from enhanced_models import NewsArticle
+            from .enhanced_models import NewsArticle
             from database import SessionLocal
             
             db = SessionLocal()

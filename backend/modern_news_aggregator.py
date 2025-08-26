@@ -17,7 +17,7 @@ import requests
 from bs4 import BeautifulSoup
 from sqlalchemy.orm import Session
 from database import get_db
-from enhanced_models import NewsArticle
+from .enhanced_models import NewsArticle
 import openai
 from transformers import pipeline
 import nltk
