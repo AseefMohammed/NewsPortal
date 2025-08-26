@@ -9,6 +9,7 @@ import {
   ScrollView
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../../styles/theme';
 
 const AISummaryComponent = ({ newsItem, onToggle }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -68,9 +69,9 @@ const AISummaryComponent = ({ newsItem, onToggle }) => {
 
   const getSentimentColor = (sentiment) => {
     switch (sentiment) {
-      case 'positive': return '#10B981';
-      case 'negative': return '#EF4444';
-      default: return '#6B7280';
+      case 'positive': return theme.colors.success || '#10B981';
+      case 'negative': return theme.colors.error || '#EF4444';
+      default: return theme.colors.textSecondary || '#6B7280';
     }
   };
 
@@ -90,7 +91,7 @@ const AISummaryComponent = ({ newsItem, onToggle }) => {
         disabled={isLoading}
       >
         <View style={styles.headerLeft}>
-          <MaterialIcons name="auto-awesome" size={20} color="#4F46E5" />
+          <MaterialIcons name="auto-awesome" size={20} color={theme.colors.primary} />
           <Text style={styles.headerText}>AI Summary</Text>
           {aiSummary && (
             <View style={[styles.confidenceBadge, { opacity: aiSummary.confidence }]}>
@@ -102,12 +103,12 @@ const AISummaryComponent = ({ newsItem, onToggle }) => {
         </View>
         
         {isLoading ? (
-          <ActivityIndicator size="small" color="#4F46E5" />
+          <ActivityIndicator size="small" color={theme.colors.primary} />
         ) : (
           <MaterialIcons 
             name={isExpanded ? "expand-less" : "expand-more"} 
             size={24} 
-            color="#4F46E5" 
+            color={theme.colors.primary} 
           />
         )}
       </TouchableOpacity>
@@ -165,7 +166,7 @@ const AISummaryComponent = ({ newsItem, onToggle }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: theme.colors.surfaceUltraLight || '#F8FAFC',
     borderRadius: 12,
     marginVertical: 8,
     overflow: 'hidden',
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFFFFF',
+  backgroundColor: theme.colors.surface || '#FFFFFF',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -185,18 +186,18 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F2937',
+  color: theme.colors.text,
     marginLeft: 8,
   },
   confidenceBadge: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: theme.colors.primary,
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 2,
     marginLeft: 8,
   },
   confidenceText: {
-    color: '#FFFFFF',
+    color: theme.colors.surfaceUltraLight || '#FFFFFF',
     fontSize: 12,
     fontWeight: '500',
   },
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 15,
     lineHeight: 22,
-    color: '#374151',
+  color: theme.colors.textSecondary,
     marginBottom: 16,
   },
   keyPointsContainer: {
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1F2937',
+  color: theme.colors.text,
     marginBottom: 8,
   },
   keyPoint: {
@@ -234,14 +235,14 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   bullet: {
-    color: '#4F46E5',
+  color: theme.colors.primary,
     fontSize: 16,
     marginRight: 8,
     marginTop: 2,
   },
   keyPointText: {
     fontSize: 14,
-    color: '#4B5563',
+    color: theme.colors.textSecondary,
     flex: 1,
     lineHeight: 20,
   },
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   topicTag: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: theme.colors.surfaceUltraLight || '#EEF2FF',
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 4,
@@ -262,7 +263,7 @@ const styles = StyleSheet.create({
   },
   topicText: {
     fontSize: 12,
-    color: '#4F46E5',
+    color: theme.colors.primary,
     fontWeight: '500',
   },
 });

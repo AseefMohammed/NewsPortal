@@ -14,6 +14,10 @@ from models import News
 from datetime import datetime
 import email.utils
 from urllib.parse import urlparse, urlunparse, parse_qs, urlencode
+from sqlalchemy.exc import IntegrityError
+import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # All news channels/resources (for future segregation)
 RSS_FEEDS = [
@@ -101,12 +105,26 @@ def normalize_url(url):
     return normalized
 
 def fetch_and_store_news(db: Session):
+    # Create a requests session with retries and sensible headers
+    session = requests.Session()
+    retries = Retry(total=3, backoff_factor=1, status_forcelist=(429, 500, 502, 503, 504))
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    session.mount('http://', HTTPAdapter(max_retries=retries))
+    headers = {
+        'User-Agent': 'NewsPortal/1.0 (+https://example.com)'
+    }
+
     for feed_url in RSS_FEEDS:
         try:
-            resp = requests.get(feed_url, timeout=10)
+            resp = session.get(feed_url, timeout=10, headers=headers)
+            if resp.status_code != 200:
+                print(f"Non-200 response for {feed_url}: {resp.status_code}")
+                continue
             d = feedparser.parse(resp.content)
         except Exception as e:
             print(f"Error fetching {feed_url}: {e}")
+            # polite short delay to avoid hammering next feed if network is flaky
+            time.sleep(0.5)
             continue
         for entry in d.entries:
             title = entry.get('title', '')
@@ -115,7 +133,7 @@ def fetch_and_store_news(db: Session):
             published = entry.get('published', '')
             source = d.feed.get('title', '')
             image = None
-            # Try to extract image from entry or fallback to scraping
+        # Try to extract image from entry or fallback to scraping
             if 'media_content' in entry and entry['media_content']:
                 image = entry['media_content'][0].get('url')
             elif 'media_thumbnail' in entry and entry['media_thumbnail']:
@@ -123,7 +141,7 @@ def fetch_and_store_news(db: Session):
             else:
                 # Fallback: scrape Open Graph image
                 try:
-                    resp_img = requests.get(url, timeout=5)
+                    resp_img = session.get(url, timeout=5, headers=headers)
                     soup = BeautifulSoup(resp_img.text, 'html.parser')
                     og_img = soup.find('meta', property='og:image')
                     if og_img:
@@ -149,19 +167,40 @@ def fetch_and_store_news(db: Session):
             except Exception as e:
                 print(f"Date parsing error for {url}: {e}")
                 published_at = datetime.utcnow()
-            # Avoid duplicates by URL
-            if not db.query(News).filter_by(url=url).first():
-                news = News(
-                    title=title,
-                    url=url,
-                    excerpt=excerpt,
-                    image=image,
-                    published_at=published_at,
-                    source=source,
-                    category=None  # Category can be set later during segregation
-                )
-                db.add(news)
-    db.commit()
+            # Avoid duplicates and handle DB integrity errors
+            if not url:
+                continue
+
+            try:
+                exists = db.query(News).filter_by(url=url).first()
+            except Exception:
+                exists = None
+
+            if exists:
+                # already in DB, skip
+                continue
+
+            news = News(
+                title=title,
+                url=url,
+                excerpt=excerpt,
+                image=image,
+                published_at=published_at,
+                source=source,
+                category=None  # Category can be set later during segregation
+            )
+            db.add(news)
+            try:
+                db.commit()
+            except IntegrityError:
+                # another thread/process inserted the same URL concurrently
+                db.rollback()
+            except Exception as e:
+                # Log and rollback to keep session usable
+                print(f"Error saving article {url}: {e}")
+                db.rollback()
+        # polite pacing between feeds
+        time.sleep(0.2)
 
 if __name__ == "__main__":
     from database import SessionLocal

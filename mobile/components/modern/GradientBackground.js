@@ -25,13 +25,12 @@ const GradientBackground = ({
 
   return (
     <View style={[styles.container, getGradientStyle(), style]}>
-      {/* Background Effects */}
-      <View style={styles.backgroundEffects}>
-        <View style={[styles.glowCircle, styles.glowCircle1]} />
-        <View style={[styles.glowCircle, styles.glowCircle2]} />
-        <View style={[styles.glowCircle, styles.glowCircle3]} />
+      {/* Subtle background accents */}
+      <View style={styles.backgroundEffects} pointerEvents="none">
+        <View style={[styles.accentBlock, styles.accent1]} />
+        <View style={[styles.accentBlock, styles.accent2]} />
       </View>
-      
+
       {/* Content */}
       <View style={styles.content}>
         {children}
@@ -59,35 +58,26 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 0,
   },
-  
-  glowCircle: {
+  accentBlock: {
     position: 'absolute',
-    borderRadius: 200,
-    opacity: 0.1,
+    borderRadius: 12,
+    opacity: 0.6,
   },
-  
-  glowCircle1: {
-    width: 300,
-    height: 300,
-    backgroundColor: theme.colors.primary,
-    top: -100,
-    right: -100,
+  accent1: {
+    width: 220,
+    height: 120,
+    backgroundColor: theme.colors.surface,
+    top: 20,
+    right: 20,
+    transform: [{ rotate: '12deg' }],
   },
-  
-  glowCircle2: {
-    width: 200,
-    height: 200,
-    backgroundColor: theme.colors.secondary,
-    bottom: -50,
-    left: -50,
-  },
-  
-  glowCircle3: {
-    width: 150,
-    height: 150,
-    backgroundColor: theme.colors.accent,
-    top: height * 0.4,
-    left: -75,
+  accent2: {
+    width: 160,
+    height: 90,
+    backgroundColor: theme.colors.card,
+    bottom: 30,
+    left: 10,
+    transform: [{ rotate: '-8deg' }],
   },
   
   // Gradient variants
@@ -100,7 +90,7 @@ const styles = StyleSheet.create({
   },
   
   gradientDark: {
-    backgroundColor: '#000000',
+  backgroundColor: theme.colors.primaryDark || '#000000',
   },
   
   gradientCard: {

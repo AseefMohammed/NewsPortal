@@ -1,23 +1,6 @@
-def test():
-    return {"status": "ok"}
-
-from fastapi import FastAPI, Depends
-from fastapi import FastAPI, Depends
-app = FastAPI(title="NewsPortal API", description="AI-Powered News Portal API", version="1.0.0")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # TODO: Restrict in production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ...existing code...
-
-@app.get("/test")
-def test():
-    return {"status": "ok"}
+# ...existing code... (cleaned duplicate header)
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends
 from typing import List
 from pydantic import BaseModel
 import os

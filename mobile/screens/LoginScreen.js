@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import { theme } from '../styles/theme';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -93,36 +94,12 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" translucent />
+  <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} translucent />
       
-      {/* Background */}
+      {/* Subtle Background */}
       <LinearGradient
-        colors={['#0a0a0a', '#111111', '#1a1a1a']}
+        colors={theme.gradientPrimary || [theme.colors.background, theme.colors.card]}
         style={StyleSheet.absoluteFill}
-      />
-
-      {/* Animated background elements */}
-      <Animated.View 
-        style={[
-          styles.glowOrb1,
-          {
-            opacity: glowAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.1, 0.25],
-            }),
-          }
-        ]}
-      />
-      <Animated.View 
-        style={[
-          styles.glowOrb2,
-          {
-            opacity: glowAnim.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0.15, 0.3],
-            }),
-          }
-        ]}
       />
 
       <KeyboardAvoidingView 
@@ -138,14 +115,8 @@ const LoginScreen = ({ navigation }) => {
             }
           ]}
         >
-          {/* Logo Section */}
+          {/* Title Section (logo removed for classic look) */}
           <View style={styles.logoSection}>
-            <LinearGradient
-              colors={['#2563eb', '#7c3aed', '#db2777']}
-              style={styles.logoGradient}
-            >
-              <Ionicons name="newspaper" size={28} color="#ffffff" />
-            </LinearGradient>
             <Text style={styles.appTitle}>NewsPortal</Text>
             <Text style={styles.subtitle}>Stay informed. Stay connected.</Text>
           </View>
@@ -162,13 +133,13 @@ const LoginScreen = ({ navigation }) => {
                   <Ionicons 
                     name="mail-outline" 
                     size={20} 
-                    color={focusedInput === 'email' ? '#2563eb' : '#666666'} 
+                    color={focusedInput === 'email' ? theme.colors.primary : theme.colors.textSecondary} 
                     style={styles.inputIcon}
                   />
                   <TextInput
                     style={styles.textInput}
                     placeholder="Email address"
-                    placeholderTextColor="#666666"
+                    placeholderTextColor={theme.colors.textSecondary}
                     value={email}
                     onChangeText={setEmail}
                     onFocus={() => setFocusedInput('email')}
@@ -192,13 +163,13 @@ const LoginScreen = ({ navigation }) => {
                   <Ionicons 
                     name="lock-closed-outline" 
                     size={20} 
-                    color={focusedInput === 'password' ? '#2563eb' : '#666666'} 
+                    color={focusedInput === 'password' ? theme.colors.primary : theme.colors.textSecondary} 
                     style={styles.inputIcon}
                   />
                   <TextInput
                     style={[styles.textInput, { flex: 1 }]}
                     placeholder="Password"
-                    placeholderTextColor="#666666"
+                    placeholderTextColor={theme.colors.textSecondary}
                     value={password}
                     onChangeText={setPassword}
                     onFocus={() => setFocusedInput('password')}
@@ -215,7 +186,7 @@ const LoginScreen = ({ navigation }) => {
                     <Ionicons 
                       name={showPassword ? "eye-off-outline" : "eye-outline"} 
                       size={20} 
-                      color="#666666" 
+                      color={theme.colors.textSecondary} 
                     />
                   </TouchableOpacity>
                 </View>
@@ -230,7 +201,7 @@ const LoginScreen = ({ navigation }) => {
               activeOpacity={0.8}
             >
               <LinearGradient
-                colors={['#2563eb', '#7c3aed']}
+                colors={theme.gradientPrimary || [theme.colors.primary, theme.colors.primaryDark || theme.colors.primary]}
                 style={styles.loginGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -277,7 +248,7 @@ const LoginScreen = ({ navigation }) => {
               activeOpacity={0.7}
             >
               <BlurView intensity={15} tint="dark" style={styles.oauthBlur}>
-                <Ionicons name="logo-google" size={22} color="#ffffff" />
+                <Ionicons name="logo-google" size={22} color={theme.colors.surfaceUltraLight || '#fff'} />
               </BlurView>
             </TouchableOpacity>
             
@@ -287,7 +258,7 @@ const LoginScreen = ({ navigation }) => {
               activeOpacity={0.7}
             >
               <BlurView intensity={15} tint="dark" style={styles.oauthBlur}>
-                <Ionicons name="logo-apple" size={22} color="#ffffff" />
+                <Ionicons name="logo-apple" size={22} color={theme.colors.surfaceUltraLight || '#fff'} />
               </BlurView>
             </TouchableOpacity>
             
@@ -297,7 +268,7 @@ const LoginScreen = ({ navigation }) => {
               activeOpacity={0.7}
             >
               <BlurView intensity={15} tint="dark" style={styles.oauthBlur}>
-                <Ionicons name="desktop-outline" size={22} color="#ffffff" />
+                <Ionicons name="desktop-outline" size={22} color={theme.colors.surfaceUltraLight || '#fff'} />
               </BlurView>
             </TouchableOpacity>
           </View>
@@ -318,33 +289,7 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
-  },
-  glowOrb1: {
-    position: 'absolute',
-    width: 250,
-    height: 250,
-    borderRadius: 125,
-    backgroundColor: '#2563eb',
-    top: -100,
-    right: -75,
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 50,
-  },
-  glowOrb2: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: '#7c3aed',
-    bottom: -50,
-    left: -40,
-    shadowColor: '#7c3aed',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 40,
+    backgroundColor: theme.colors.background,
   },
   content: {
     flex: 1,
@@ -356,30 +301,18 @@ const styles = StyleSheet.create({
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: 40,
-  },
-  logoGradient: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
+    marginBottom: 28,
   },
   appTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#ffffff',
+    color: theme.colors.text,
     marginBottom: 8,
     letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#888888',
+    fontSize: 15,
+    color: theme.colors.textSecondary,
     fontWeight: '400',
   },
   form: {
@@ -393,19 +326,19 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+  borderColor: 'rgba(0,0,0,0.06)',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  backgroundColor: theme.colors.surfaceUltraLight || 'rgba(255,255,255,0.6)',
     minHeight: 54,
   },
   inputFocused: {
-    borderColor: '#2563eb',
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+  borderColor: theme.colors.primaryDark,
+  backgroundColor: theme.colors.surface,
   },
   inputIcon: {
     marginRight: 12,
@@ -413,7 +346,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    color: '#ffffff',
+  color: theme.colors.text,
     fontWeight: '500',
   },
   passwordToggle: {
@@ -424,10 +357,7 @@ const styles = StyleSheet.create({
     height: 54,
     borderRadius: 14,
     marginTop: 8,
-    shadowColor: '#2563eb',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
+  ...theme.shadows.soft,
   },
   loginButtonDisabled: {
     opacity: 0.6,
@@ -437,11 +367,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 14,
+    backgroundColor: theme.colors.primary,
   },
   buttonText: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#ffffff',
+    color: theme.colors.surfaceUltraLight || '#fff',
     letterSpacing: 0.3,
   },
   loadingContainer: {
@@ -452,7 +383,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#ffffff',
+  backgroundColor: theme.colors.surfaceUltraLight || '#fff',
     marginRight: 8,
   },
   forgotPassword: {
@@ -461,7 +392,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   forgotPasswordText: {
-    color: '#2563eb',
+  color: theme.colors.primary,
     fontSize: 15,
     fontWeight: '500',
   },
@@ -473,11 +404,11 @@ const styles = StyleSheet.create({
   },
   line: {
     flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  height: 1,
+  backgroundColor: 'rgba(0,0,0,0.06)',
   },
   dividerText: {
-    color: '#666666',
+  color: theme.colors.textSecondary,
     fontSize: 14,
     marginHorizontal: 16,
     fontWeight: '500',
@@ -493,14 +424,14 @@ const styles = StyleSheet.create({
     height: 54,
     borderRadius: 14,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+  borderWidth: 1,
+  borderColor: 'rgba(0,0,0,0.06)',
   },
   oauthBlur: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  backgroundColor: theme.colors.surfaceUltraLight || 'rgba(255,255,255,0.6)',
   },
   signupContainer: {
     flexDirection: 'row',
@@ -508,11 +439,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   signupText: {
-    color: '#888888',
+  color: theme.colors.textSecondary,
     fontSize: 15,
   },
   signupLink: {
-    color: '#2563eb',
+  color: theme.colors.primary,
     fontSize: 15,
     fontWeight: '600',
   },

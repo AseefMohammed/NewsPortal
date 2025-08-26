@@ -9,6 +9,7 @@ import {
   RefreshControl
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../../styles/theme';
 
 const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
   const [feedData, setFeedData] = useState([]);
@@ -61,7 +62,7 @@ const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
       <MaterialIcons 
         name={icon} 
         size={16} 
-        color={feedType === type ? '#FFFFFF' : '#6B7280'} 
+        color={feedType === type ? theme.colors.surfaceUltraLight || '#fff' : theme.colors.textSecondary} 
       />
       <Text style={[styles.feedTypeText, feedType === type && styles.feedTypeTextActive]}>
         {label}
@@ -80,7 +81,7 @@ const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
         </Text>
         {item.ai_confidence && (
           <View style={styles.aiIndicator}>
-            <MaterialIcons name="auto-awesome" size={12} color="#4F46E5" />
+            <MaterialIcons name="auto-awesome" size={12} color={theme.colors.primary} />
           </View>
         )}
       </View>
@@ -122,7 +123,7 @@ const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
       {/* Personalization Score */}
       {item.personalization_score && (
         <View style={styles.personalizationScore}>
-          <MaterialIcons name="person" size={12} color="#10B981" />
+          <MaterialIcons name="person" size={12} color={theme.colors.success || '#10B981'} />
           <Text style={styles.scoreText}>
             {Math.round(item.personalization_score * 100)}% match
           </Text>
@@ -166,15 +167,15 @@ const PersonalizedFeedComponent = ({ userId, onNewsItemPress }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface || '#FFFFFF',
   },
   feedTypeSelector: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#F9FAFB',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  backgroundColor: theme.colors.surfaceUltraLight || '#F9FAFB',
+  borderBottomWidth: 1,
+  borderBottomColor: theme.colors.border || '#E5E7EB',
   },
   feedTypeButton: {
     flexDirection: 'row',
@@ -183,25 +184,25 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     marginRight: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface || '#FFFFFF',
   },
   feedTypeButtonActive: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: theme.colors.primary,
   },
   feedTypeText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#6B7280',
+  color: theme.colors.textSecondary,
     marginLeft: 4,
   },
   feedTypeTextActive: {
-    color: '#FFFFFF',
+    color: theme.colors.surfaceUltraLight || '#FFFFFF',
   },
   feedList: {
     paddingVertical: 8,
   },
   newsItem: {
-    backgroundColor: '#FFFFFF',
+  backgroundColor: theme.colors.surface || '#FFFFFF',
     marginHorizontal: 16,
     marginVertical: 6,
     padding: 16,
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F2937',
+  color: theme.colors.text,
     lineHeight: 22,
   },
   aiIndicator: {
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
   },
   aiSummary: {
     fontSize: 14,
-    color: '#4B5563',
+  color: theme.colors.textSecondary,
     lineHeight: 20,
     marginBottom: 12,
     fontStyle: 'italic',
@@ -248,17 +249,17 @@ const styles = StyleSheet.create({
   },
   newsSource: {
     fontSize: 12,
-    color: '#6B7280',
+  color: theme.colors.textSecondary,
     fontWeight: '500',
   },
   newsDot: {
     fontSize: 12,
-    color: '#D1D5DB',
+  color: theme.colors.border || '#D1D5DB',
     marginHorizontal: 6,
   },
   newsTime: {
     fontSize: 12,
-    color: '#6B7280',
+  color: theme.colors.textSecondary,
   },
   sentimentBadge: {
     width: 20,
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   },
   sentimentText: {
     fontSize: 10,
-    color: '#FFFFFF',
+  color: theme.colors.surfaceUltraLight || '#FFFFFF',
     fontWeight: 'bold',
   },
   topicsContainer: {
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   topicTag: {
-    backgroundColor: '#EEF2FF',
+  backgroundColor: theme.colors.surfaceUltraLight || '#EEF2FF',
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
   },
   topicText: {
     fontSize: 10,
-    color: '#4F46E5',
+  color: theme.colors.primary,
     fontWeight: '500',
   },
   personalizationScore: {
@@ -298,7 +299,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 10,
-    color: '#10B981',
+  color: theme.colors.success || '#10B981',
     fontWeight: '500',
     marginLeft: 2,
   },

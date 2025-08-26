@@ -5,5 +5,8 @@
   "workspaces": [
     "mobile",
     "backend"
-  ]
+  ],
+  "scripts": {
+    "start": "npm --prefix mobile start"
+  }
 }

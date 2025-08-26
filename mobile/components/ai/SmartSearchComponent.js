@@ -10,6 +10,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../../styles/theme';
 
 const SmartSearchComponent = ({ onSearchResults, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -117,7 +118,7 @@ const SmartSearchComponent = ({ onSearchResults, onClose }) => {
             onSubmitEditing={() => performSearch()}
             autoFocus
           />
-          {isLoading && <ActivityIndicator size="small" color="#4F46E5" />}
+          {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
         </View>
 
         {/* Search Mode Toggle */}
@@ -168,7 +169,7 @@ const SmartSearchComponent = ({ onSearchResults, onClose }) => {
           </View>
         ) : (
           <View style={styles.emptyState}>
-            <MaterialIcons name="search" size={48} color="#D1D5DB" />
+            <MaterialIcons name="search" size={48} color={theme.colors.border || '#D1D5DB'} />
             <Text style={styles.emptyStateText}>
               {searchMode === 'semantic' 
                 ? 'Try natural language queries like "positive tech news" or "healthcare breakthroughs"'
@@ -185,7 +186,7 @@ const SmartSearchComponent = ({ onSearchResults, onClose }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface || '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  borderBottomColor: theme.colors.border || '#E5E7EB',
   },
   closeButton: {
     padding: 4,
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: theme.colors.text,
   },
   placeholder: {
     width: 32,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+  backgroundColor: theme.colors.surfaceUltraLight || '#F9FAFB',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -222,12 +223,12 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: '#1F2937',
+  color: theme.colors.text,
     marginLeft: 8,
   },
   modeToggle: {
     flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
+  backgroundColor: theme.colors.surfaceUltraLight || '#F3F4F6',
     borderRadius: 8,
     padding: 4,
   },
@@ -240,16 +241,16 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   modeButtonActive: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: theme.colors.primary,
   },
   modeText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#6B7280',
+    color: theme.colors.textSecondary,
     marginLeft: 4,
   },
   modeTextActive: {
-    color: '#FFFFFF',
+    color: theme.colors.surfaceUltraLight || '#FFFFFF',
   },
   content: {
     flex: 1,
@@ -266,23 +267,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+  borderBottomColor: theme.colors.surfaceUltraLight || '#F3F4F6',
   },
   suggestionText: {
     flex: 1,
     fontSize: 15,
-    color: '#374151',
+  color: theme.colors.textSecondary,
     marginLeft: 12,
   },
   suggestionType: {
-    backgroundColor: '#EEF2FF',
+  backgroundColor: theme.colors.surfaceUltraLight || '#EEF2FF',
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
   suggestionTypeText: {
     fontSize: 12,
-    color: '#4F46E5',
+  color: theme.colors.primary,
     fontWeight: '500',
   },
   recentItem: {
@@ -290,11 +291,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+  borderBottomColor: theme.colors.surfaceUltraLight || '#F3F4F6',
   },
   recentText: {
     fontSize: 15,
-    color: '#6B7280',
+  color: theme.colors.textSecondary,
     marginLeft: 12,
   },
   emptyState: {
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    color: '#6B7280',
+    color: theme.colors.textSecondary,
     textAlign: 'center',
     marginTop: 16,
     lineHeight: 24,

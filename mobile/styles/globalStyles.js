@@ -1,45 +1,54 @@
 import { StyleSheet } from 'react-native';
+import { theme } from './theme';
 
 export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24, // theme.spacing.lg
-    paddingTop: 24, // theme.spacing.lg
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    backgroundColor: theme.colors.background,
   },
   card: {
-    borderRadius: 16, // theme.borderRadius.lg
-    padding: 24, // theme.spacing.lg
-    marginBottom: 24, // theme.spacing.lg
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
+    backgroundColor: theme.colors.card,
+    ...theme.shadows.soft,
   },
   section: {
-    marginBottom: 32, // theme.spacing.xl
+    marginBottom: theme.spacing.xl || 32,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   text: {
-    fontFamily: 'Roboto-Regular',
-    fontSize: 16, // theme.typography.fontSize.base
+    fontFamily: theme.fonts.regular.fontFamily,
+    fontSize: theme.typography?.fontSize?.base || 16,
+    color: theme.colors.text,
   },
   title: {
-    fontFamily: 'Roboto-Bold',
-    fontSize: 20, // theme.typography.fontSize.xl
-    marginBottom: 16, // theme.spacing.md
+    fontFamily: theme.fonts.bold.fontFamily,
+    fontSize: theme.typography?.fontSize?.xl || 20,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.text,
   },
   subtitle: {
-    fontFamily: 'Roboto-Medium',
-    fontSize: 18, // theme.typography.fontSize.lg
-    marginBottom: 8, // theme.spacing.sm
+    fontFamily: theme.fonts.medium.fontFamily,
+    fontSize: theme.typography?.fontSize?.lg || 18,
+    marginBottom: theme.spacing.sm,
+    color: theme.colors.textSecondary,
   },
   button: {
-    borderRadius: 12, // theme.borderRadius.md
-    paddingVertical: 16, // theme.spacing.md
+    borderRadius: theme.borderRadius.md,
+    paddingVertical: theme.spacing.md,
     alignItems: 'center',
-    marginVertical: 8, // theme.spacing.sm
+    marginVertical: theme.spacing.sm,
+    backgroundColor: theme.colors.primary,
   },
   buttonText: {
-    fontFamily: 'Roboto-Bold',
-    fontSize: 16, // theme.typography.fontSize.base
+    fontFamily: theme.fonts.bold.fontFamily,
+    fontSize: theme.typography?.fontSize?.base || 16,
+    color: theme.colors.surfaceUltraLight || '#fff',
   },
 });
