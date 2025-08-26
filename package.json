@@ -7,6 +7,10 @@
     "backend"
   ],
   "scripts": {
-    "start": "npm --prefix mobile start"
+    "start": "npm --prefix mobile start",
+    "dev": "concurrently -k \".venv/bin/python3 backend/main.py\" \"npm --prefix mobile start\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
   }
 }
