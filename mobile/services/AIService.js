@@ -22,8 +22,8 @@ console.log('🌐 Platform detection:', {
   navigatorProduct: typeof window !== 'undefined' && window.navigator ? window.navigator.product : 'undefined'
 });
 
-// Production URL - Your Render deployment
-const PRODUCTION_URL = 'https://newsportal-3.onrender.com';
+// Production URL: read from environment in production; do not hard-code deployment host here
+const PRODUCTION_URL = (typeof process !== 'undefined' && process.env && (process.env.PRODUCTION_URL || process.env.API_BASE_URL)) || '';
 
 // Local backend defaults (used in development)
 const LOCAL_BACKEND_PORT = 8000; // backend listens on this port locally
