@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { theme } from '../styles/theme';
+import AIService from '../services/AIService';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -280,6 +281,13 @@ const LoginScreen = ({ navigation }) => {
               <Text style={styles.signupLink}>Sign up</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Debug label showing resolved API URL in dev */}
+          {__DEV__ && (
+            <View style={styles.debugContainer}>
+              <Text style={styles.debugLabel}>API: {AIService.baseURL}</Text>
+            </View>
+          )}
         </Animated.View>
       </KeyboardAvoidingView>
     </SafeAreaView>
