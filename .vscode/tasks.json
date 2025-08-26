@@ -1,0 +1,58 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Backend",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python3",
+      "args": ["backend/main.py"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Frontend",
+      "type": "shell",
+      "command": "npm",
+      "args": ["start", "--prefix", "mobile"],
+      "group": "build",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Run Backend",
+			"command": "python3 backend/main.py",
+			"group": "build",
+			"isBackground": true
+		}
+		,
+		{
+			"type": "shell",
+			"label": "Run Frontend",
+			"command": "npm start --prefix mobile",
+			"group": "build",
+			"isBackground": true
+		}
+	]
+}
