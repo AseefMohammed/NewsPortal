@@ -6,6 +6,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 // Backend API configuration
 const isReactNative = typeof window === 'undefined' || window.navigator?.product === 'ReactNative';
@@ -35,11 +36,18 @@ const OVERRIDE_URL = (typeof process !== 'undefined' && process.env && process.e
 
 // Determine which URL to use
 let API_BASE_URL;
+// Try to detect the packager host from Expo Constants (gives host:port when running Metro)
+const debuggerHost = (Constants && (Constants.manifest?.debuggerHost || Constants.manifest2?.debuggerHost)) || null;
+const detectedHost = debuggerHost ? debuggerHost.split(':')[0] : null;
+
 if (OVERRIDE_URL) {
   API_BASE_URL = OVERRIDE_URL;
 } else if (isDev) {
   if (isWeb) {
     API_BASE_URL = LOCAL_HOST_WEB;
+  } else if (detectedHost) {
+    // Use detected host from Expo packager so a physical device scanning the QR targets the dev machine
+    API_BASE_URL = `http://${detectedHost}:${LOCAL_BACKEND_PORT}`;
   } else if (Platform.OS === 'android') {
     API_BASE_URL = LOCAL_HOST_ANDROID;
   } else {
