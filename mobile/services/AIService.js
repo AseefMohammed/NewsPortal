@@ -26,7 +26,7 @@ console.log('🌐 Platform detection:', {
 const PRODUCTION_URL = (typeof process !== 'undefined' && process.env && (process.env.PRODUCTION_URL || process.env.API_BASE_URL)) || '';
 
 // Helper: normalize a base URL so it always has a protocol and no trailing slash
-function normalizeBaseUrl(rawUrl, preferHttp = false) {
+export function normalizeBaseUrl(rawUrl, preferHttp = false) {
   if (!rawUrl) return '';
   let url = String(rawUrl).trim();
 
