@@ -24,17 +24,33 @@ console.log('🌐 Platform detection:', {
 // Production URL - Your Render deployment
 const PRODUCTION_URL = 'https://newsportal-3.onrender.com';
 
-// Development URL for local testing
-const DEVELOPMENT_URL = Platform.OS === 'web' 
-  ? 'http://localhost:8002'  // Web development (proxy server)
-  : 'http://10.0.2.2:8002';  // Android Emulator (proxy server)
+// Local backend defaults (used in development)
+const LOCAL_BACKEND_PORT = 8000; // backend listens on this port locally
+const LOCAL_HOST_WEB = `http://localhost:${LOCAL_BACKEND_PORT}`;
+const LOCAL_HOST_IOS = `http://localhost:${LOCAL_BACKEND_PORT}`; // iOS simulator uses localhost
+const LOCAL_HOST_ANDROID = `http://10.0.2.2:${LOCAL_BACKEND_PORT}`; // Android emulator
+
+// Allow an explicit override via environment variable when needed
+const OVERRIDE_URL = (typeof process !== 'undefined' && process.env && process.env.API_BASE_URL) || null;
 
 // Determine which URL to use
-// Force production URL for now since we have a working deployment
-const API_BASE_URL = PRODUCTION_URL;
+let API_BASE_URL;
+if (OVERRIDE_URL) {
+  API_BASE_URL = OVERRIDE_URL;
+} else if (isDev) {
+  if (isWeb) {
+    API_BASE_URL = LOCAL_HOST_WEB;
+  } else if (Platform.OS === 'android') {
+    API_BASE_URL = LOCAL_HOST_ANDROID;
+  } else {
+    API_BASE_URL = LOCAL_HOST_IOS;
+  }
+} else {
+  API_BASE_URL = PRODUCTION_URL;
+}
 
 console.log('🔗 Final API_BASE_URL:', API_BASE_URL);
-console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Selected URL:', API_BASE_URL);
+console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Platform.OS:', Platform.OS, 'Selected URL:', API_BASE_URL);
 
 // Simple backend uses no prefix - endpoints are at root level
 const API_BASE = API_BASE_URL;
