@@ -25,6 +25,21 @@ console.log('🌐 Platform detection:', {
 // Production URL: read from environment in production; do not hard-code deployment host here
 const PRODUCTION_URL = (typeof process !== 'undefined' && process.env && (process.env.PRODUCTION_URL || process.env.API_BASE_URL)) || '';
 
+// Helper: normalize a base URL so it always has a protocol and no trailing slash
+function normalizeBaseUrl(rawUrl, preferHttp = false) {
+  if (!rawUrl) return '';
+  let url = String(rawUrl).trim();
+
+  // If URL looks like host:port (no protocol), add a sensible default
+  if (!/^https?:\/\//i.test(url)) {
+    url = (preferHttp ? 'http://' : 'https://') + url;
+  }
+
+  // remove trailing slash
+  if (url.endsWith('/')) url = url.slice(0, -1);
+  return url;
+}
+
 // Local backend defaults (used in development)
 const LOCAL_BACKEND_PORT = 8000; // backend listens on this port locally
 const LOCAL_HOST_WEB = `http://localhost:${LOCAL_BACKEND_PORT}`;
@@ -57,8 +72,13 @@ if (OVERRIDE_URL) {
   API_BASE_URL = PRODUCTION_URL;
 }
 
-console.log('🔗 Final API_BASE_URL:', API_BASE_URL);
-console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Platform.OS:', Platform.OS, 'Selected URL:', API_BASE_URL);
+// Normalize final base URL and prefer http in dev for convenience
+API_BASE_URL = normalizeBaseUrl(API_BASE_URL, !!isDev);
+
+if (isDev) {
+  console.log('🔗 Final API_BASE_URL:', API_BASE_URL);
+  console.log('🔗 Decision logic - isDev:', isDev, 'isWeb:', isWeb, 'Platform.OS:', Platform.OS, 'Selected URL:', API_BASE_URL);
+}
 
 // Simple backend uses no prefix - endpoints are at root level
 const API_BASE = API_BASE_URL;
@@ -83,7 +103,8 @@ class AIService {
    * @param {object} options - fetch options (method, headers, body, etc.)
    */
   async apiRequest(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+  const base = this.baseURL || API_BASE_URL || '';
+  const url = `${base}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
     const fetchOptions = {
       method: options.method || 'GET',
       headers: {
@@ -239,7 +260,8 @@ class AIService {
    */
   async getServerInfo() {
     try {
-      console.log('Attempting to connect to:', API_BASE_URL);
+  const base = this.baseURL || API_BASE_URL || '';
+  if (isDev) console.log('Attempting to connect to:', base);
       
       // Create timeout promise
       const timeoutPromise = new Promise((_, reject) =>
@@ -247,7 +269,7 @@ class AIService {
       );
       
       // Test connection with the simple /test endpoint first (lighter)
-      const fetchPromise = fetch(`${API_BASE_URL}/test`, {
+  const fetchPromise = fetch(`${base}/test`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
