@@ -230,6 +230,22 @@ class AIService {
     this.apiBase = API_BASE;
     this.cache = new Map();
     this.authToken = null;
+    // Fail fast in production when no API base URL is provided
+    if (!isDev && (!this.baseURL || this.baseURL.length === 0)) {
+      console.error('AIService: Missing production API base URL. Set PRODUCTION_URL or API_BASE_URL environment variable.');
+      throw new Error('AIService: Missing production API base URL. Set PRODUCTION_URL or API_BASE_URL environment variable.');
+    }
+  }
+
+  /**
+   * Override the base URL at runtime (dev-only convenience).
+   * Returns the normalized URL.
+   */
+  setBaseURL(rawUrl) {
+    const normalized = normalizeBaseUrl(rawUrl, !!isDev);
+    this.baseURL = normalized;
+    if (isDev) console.log('AIService: baseURL overridden ->', this.baseURL);
+    return this.baseURL;
   }
 
 // ...existing code...
