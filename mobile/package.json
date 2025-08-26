@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-  "test": "node ./scripts/run-simple-tests.js",
+  "test": "node --experimental-json-modules ./scripts/run-simple-tests.mjs",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
